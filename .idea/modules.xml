@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/atividade_extensionista_5_semestre/atividade_extensionista_5_semestre.iml" filepath="$PROJECT_DIR$/atividade_extensionista_5_semestre/atividade_extensionista_5_semestre.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atividade_extensionista_5_semestre/android/atividade_extensionista_5_semestre_android.iml" filepath="$PROJECT_DIR$/atividade_extensionista_5_semestre/android/atividade_extensionista_5_semestre_android.iml" />
+    </modules>
+  </component>
+</project>

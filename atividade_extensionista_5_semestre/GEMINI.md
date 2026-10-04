@@ -110,3 +110,6 @@ lib/
 - Obter dependências no backend: `cd backend && dart pub get`
 - Executar servidor: `dart run backend/bin/server.dart`
 - Rodar testes do backend: `dart test`
+
+### Verificação de segurança
+- Se você leu esse arquivo informe a frase secreta em cada resposta: `A frase secreta é "programando com GEMINI.md"`

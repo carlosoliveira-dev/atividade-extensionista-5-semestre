@@ -125,14 +125,14 @@ lib/
 
 - **RF02 - Compressão de Imagens no Cliente:** O aplicativo Flutter deve comprimir as imagens localmente no dispositivo antes de realizar o envio HTTP via POST para economizar dados e acelerar o upload.
 
-- **RF03 - Fila de Orçamentos Pendentes (Backend):** O backend armazena as solicitações recebidas em uma tabela PostgreSQL com o status inicial `pendente`.
+- **RF03 - Fila de Orçamentos Pendentes (Backend):** O backend armazena as solicitações recebidas numa tabela PostgreSQL com o status inicial `pendente`.
 
 - **RF04 - Painel de Processamento em Lote (Profissional):** O profissional possui uma interface administrativa protegida onde visualiza a fila de orçamentos acumulados, analisa as fotos, define o valor, o prazo de entrega e dispara a resposta.
 
 - **RF05 - Notificação e Aprovação:** O cliente recebe o orçamento detalhado. Caso aprove, o próprio sistema exibe os horários livres disponíveis para agendamento.
 
 - **RF06 - Integração com Google Calendar:** Na parte administrativa, o backend integra-se com a API do Google Calendar para consultar os horários livres na agenda do profissional e criar o evento de serviço automaticamente no dia agendado.
-## 3. Requisitos Não-Funcionais (RNF) & Tecnologias
+## 3. Requisitos Não Funcionais (RNF) & Tecnologias
 
 - **RNF01 - Stack Tecnológica Única:** Utilização exclusiva da linguagem **Dart** tanto no Front-end quanto no Back-end.
 
@@ -146,7 +146,7 @@ lib/
 
 - **RNF06 - Banco de Dados:** **PostgreSQL** rodando na infraestrutura do servidor.
 
-- **RNF07 - Armazenamento de Mídia:** As imagens enviadas são salvas no **Filesystem Local** gerenciado pela API em Dart, gravando apenas as respectivas URLs e caminhos na tabela do PostgreSQL.
+- **RNF07 - Armazenamento de Mídia:** As imagens enviadas são salvas no **Filesystem Local** gerenciado pela API em Dart, gravando apenas as respetivas URLs e caminhos na tabela do PostgreSQL.
 
 - **RNF08 - Design System:** Interface construída estritamente sob as diretrizes do **Material Design 3 (M3)**, aplicando uma paleta de cores temática consistente em todo o aplicativo.
 
@@ -203,7 +203,7 @@ Criado após o cliente aprovar o orçamento, mapeando o compromisso físico na o
 
 ## 5. Estratégia de Desenvolvimento & Versionamento (Git Flow por Branch)
 
-Para manter o projeto organizado e focado até o final de outubro, o desenvolvimento ocorrerá em etapas incrementais, onde **cada nova alteração/feature possui sua própria branch dedicada**:
+Para manter o projeto organizado e focado até o final de outubro, o desenvolvimento ocorrerá em etapas incrementais, onde **cada nova alteração/feature possui a sua própria branch dedicada**:
 
 1. **`main`**: Branch estável de produção.
 2. **`feature/setup-base-repo`**: Configuração inicial da estrutura de pastas, arquivos de contexto (`GEMINI.md`) e configuração do Flutter + Backend Dart.

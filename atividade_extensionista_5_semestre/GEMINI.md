@@ -213,5 +213,84 @@ Para manter o projeto organizado e focado até o final de outubro, o desenvolvim
 6. **`feature/frontend-admin-dashboard`**: Desenvolvimento do painel do profissional para visualização em lote dos orçamentos e agendamento.
 7. **`feature/deploy-pipeline`**: Configuração do binário nativo no servidor de portfólio e empacotamento do app para a Google Play.
 
+# Protótipo Descritivo de Telas (UI Wireframe Textual)
+
+## 📱 Fluxo do Cliente (Fricção Zero - Sem Login)
+
+### Tela 1: Tela Inicial (Home do Cliente)
+
+- **Objetivo:** Apresentar a proposta de valor da oficina e fornecer um caminho direto e sem burocracia para iniciar a solicitação.
+
+- **Organização dos Elementos (M3):**
+
+  - **Top App Bar:** Título minimalista _"Impact Car - Funilaria & Pintura"_.
+  - **Card de Destaque (Hero Section):**
+    - Ícone ilustrativo de um veículo.
+    - Texto explicativo: _"Precisa de um orçamento rápido sem sair de casa? Envie fotos do dano e receba a avaliação do especialista no final do dia."_
+  - **Área de Ação Principal (Botão de Destaque - Filled Button):**
+    - Botão grande centralizado: `[ Solicitar Orçamento sem Cadastro ]`.
+  - **Rodapé Informativo:** Ícones discretos indicando os benefícios (Sustentabilidade ODS 13 e Otimização de Tempo ODS 8).
+
+### Tela 2: Formulário de Solicitação (Etapa Única / Fluxo Direto)
+
+- **Objetivo:** Coletar os dados essenciais do veículo e as evidências fotográficas em uma interface guiada.
+- **Organização dos Elementos (M3):**
+  - **Top App Bar:** Botão de voltar e título _"Novo Orçamento"_.
+  - **Seção 1: Identificação**
+    - Campo de Texto (`TextField`): _Seu Nome Completo_.
+    - Campo de Texto: _WhatsApp / Telefone para Contato_ (com máscara numérica).
+  - **Seção 2: Dados do Veículo**
+    - Campo de Texto: _Modelo do Veículo (ex: Honda Civic)_.
+    - Campo de Texto: _Placa do Veículo (ex: ABC-1234)_.
+  - **Seção 3: Descrição do Problema**
+    - Campo de Texto Multilinhas: _Descreva brevemente o que aconteceu (ex: Batida leve no pilar da garagem)_.
+  - **Seção 4: Evidências Visuais (Obrigatório de 3 a 5 fotos)**
+    - Instrução visual com guia ("fantasma/silhueta"): _"Posicione a câmera para capturar o ângulo correto (Geral, Lateral e Foco no Dano)"_.
+    - Grid de Miniaturas de Fotos (com botões de adicionar/remover). Exibe de 3 a 5 caixas pontilhadas `[ + Adicionar Foto ]`.
+  - **Rodapé Fixo (Floating Action / Bottom Bar):**
+    - Botão de Envio de Alta Visibilidade: `[ Enviar Solicitação para Avaliação ]`.
+
+### Tela 3: Tela de Confirmação (Sucesso do Envio)
+
+- **Objetivo:** Tranquilizar o cliente e explicar claramente o próximo passo do modelo assíncrono.
+- **Organização dos Elementos (M3):**
+  - **Centralizado na Tela:**
+    - Ícone grande de sucesso (Check circundado em verde/cor primária do tema).
+    - Título em destaque: _"Solicitação Recebida com Sucesso!"_
+    - Card de Resumo: Mensagem explicativa informando que o chapeador avaliará o caso no final do expediente e que o cliente receberá o retorno oficial via WhatsApp/App.
+    - Botão de Retorno: `[ Voltar ao Início ]`.
+
+## 💻 Fluxo do Profissional (Painel Administrativo / Restrito)
+
+### Tela 4: Dashboard do Profissional (Fila de Orçamentos Pendentes)
+
+- **Objetivo:** Permitir que o chapeador processe os orçamentos em lote de forma rápida e organizada no fim do dia.
+- **Organização dos Elementos (M3):**
+  - **Top App Bar:** Título _"Painel do Chapeador - Fila de Orçamentos"_ com indicador de quantidade pendente (Ex: `4 Pendentes`).
+  - **Lista de Cards (Fila de Espera):**
+    - Cada card na lista representa um cliente e contém:
+      - Cabeçalho do Card: _Nome do Cliente_ + _Modelo/Placa do Carro_ + _Horário de envio_.
+      - Corpo do Card: Descrição rápida do dano relatado.
+      - Miniaturas das Fotos enviadas (clicáveis para zoom).
+      - Botão de Ação Rápida: `[ Avaliar e Enviar Orçamento ]`.
+  - **Menu Lateral ou Aba Inferior:** Atalho para alternar entre _Orçamentos Pendentes_, _Histórico_ e _Agenda de Serviços_.
+
+### Tela 5: Modal / Tela de Emissão de Proposta e Agendamento
+
+- **Objetivo:** Definir o preço, o prazo do serviço após a análise das fotos e vincular o atendimento diretamente à agenda.
+
+- **Organização dos Elementos (M3):**
+  - **Cabeçalho:** Resumo do veículo selecionado e dados do cliente.
+  - **Formulário de Resposta:**
+    - Campo de Valor (`TextField` monetário): _Valor Estimado do Reparo (R$)_.
+    - Campo de Prazo (`TextField`): _Prazo de Execução (ex: 2 dias úteis)_.
+    - Caixa de Texto Opcional: _Observações técnicas para o cliente_.
+  - **Seção de Sincronização de Agenda (Google Calendar):**
+    - Componente de visualização dos _Slots de Horários Livres_ obtidos diretamente da API do Google Calendar do profissional.
+    - Seletor de data e horário disponível para o agendamento do serviço.
+  - **Botões de Ação:**
+    - `[ Cancelar ]`
+    - `[ Disparar Orçamento e Agendar na Agenda ]` (Envia a resposta formal ao cliente e cria o evento automaticamente no Google Calendar).
+
 ### Verificação de segurança
 - Se você leu esse arquivo informe a frase secreta em cada resposta: `A frase secreta é "programando com GEMINI.md"`

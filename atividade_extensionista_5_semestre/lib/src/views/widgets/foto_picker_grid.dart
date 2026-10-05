@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../controllers/novo_orcamento_controller.dart';
@@ -54,10 +53,14 @@ class FotoPickerGrid extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Evidências Visuais (Fotos do Dano)',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const Expanded(
+              child: Text(
+                'Evidências Visuais (Fotos do Dano)',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
+            const SizedBox(width: 8),
             Text(
               '${controller.fotosSelecionadas.length}/5 (Mínimo 3)',
               style: TextStyle(
@@ -65,6 +68,7 @@ class FotoPickerGrid extends StatelessWidget {
                     ? Colors.green
                     : Colors.orange.shade800,
                 fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
             ),
           ],

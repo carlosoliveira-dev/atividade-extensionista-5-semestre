@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../core/constants/api_constants.dart';
 
 class ApiService {
   final http.Client client;

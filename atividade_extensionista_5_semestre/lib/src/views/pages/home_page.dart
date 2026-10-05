@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 10),
             // Hero Section
             Card(
-              color: theme.colorScheme.primaryContainer.withOpacity(0.4),
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../controllers/novo_orcamento_controller.dart';
-import '../../core/theme/app_theme.dart';
 
 class FotoPickerGrid extends StatelessWidget {
   final NovoOrcamentoController controller;
@@ -126,7 +125,7 @@ class FotoPickerGrid extends StatelessWidget {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       child: Text(
                         catName,
                         style: const TextStyle(color: Colors.white, fontSize: 9),
@@ -148,7 +147,7 @@ class FotoPickerGrid extends StatelessWidget {
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: index < 3 ? primaryColor.withOpacity(0.5) : Colors.grey.shade400,
+                    color: index < 3 ? primaryColor.withValues(alpha: 0.5) : Colors.grey.shade400,
                     style: BorderStyle.solid,
                     width: 1.5,
                   ),

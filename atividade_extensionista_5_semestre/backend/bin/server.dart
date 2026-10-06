@@ -22,6 +22,8 @@ import 'package:backend/src/presentation/routes/api_router.dart';
 void main(List<String> args) async {
   // Configuração das camadas Clean Architecture
   final dbDatasource = DatabaseDatasource();
+  await dbDatasource.inicializar();
+
   final calendarDatasource = GoogleCalendarDatasource();
 
   final orcamentoRepository = OrcamentoRepositoryImpl(dbDatasource);

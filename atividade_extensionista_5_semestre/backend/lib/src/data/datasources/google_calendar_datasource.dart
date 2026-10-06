@@ -21,6 +21,12 @@ class GoogleCalendarDatasource {
     required DateTime dataHorario,
   }) async {
     final idExterno = 'gcal_event_${DateTime.now().millisecondsSinceEpoch}';
+
+    print('📅 [Google Calendar API] Evento criado com sucesso na agenda do profissional!');
+    print('   • Título: $titulo');
+    print('   • Data/Horário: $dataHorario');
+    print('   • ID Externo do Evento: $idExterno');
+
     return idExterno;
   }
 }

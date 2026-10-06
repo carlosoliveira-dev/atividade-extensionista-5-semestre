@@ -32,8 +32,21 @@ class EmitirPropostaUseCase {
     }
 
     final propostaId = 'prop_${DateTime.now().millisecondsSinceEpoch}';
-    Agendamento? agendamento;
 
+    // 1. Salvar a Proposta primeiro para satisfazer a restrição de Chave Estrangeira (FK) no PostgreSQL
+    final proposta = Proposta(
+      id: propostaId,
+      orcamentoId: orcamentoId,
+      valorEstimado: valorEstimado,
+      prazoEntrega: prazoEntrega,
+      observacoes: observacoes,
+      dataEnvio: DateTime.now(),
+    );
+
+    final propostaCriada = await propostaRepository.criarProposta(proposta);
+
+    // 2. Criar e salvar o Agendamento caso um horário tenha sido selecionado
+    Agendamento? agendamento;
     if (dataHorarioAgendado != null) {
       final eventId = await calendarRepository.criarEventoAgenda(
         titulo: 'Serviço: ${orcamento.veiculoModelo} (${orcamento.veiculoPlaca})',
@@ -54,19 +67,16 @@ class EmitirPropostaUseCase {
       await agendamentoRepository.criarAgendamento(agendamento);
     }
 
-    final proposta = Proposta(
-      id: propostaId,
-      orcamentoId: orcamentoId,
-      valorEstimado: valorEstimado,
-      prazoEntrega: prazoEntrega,
-      observacoes: observacoes,
-      dataEnvio: DateTime.now(),
-      agendamento: agendamento,
-    );
-
-    final propostaCriada = await propostaRepository.criarProposta(proposta);
     await orcamentoRepository.atualizarStatus(orcamentoId, StatusOrcamento.enviado);
 
-    return propostaCriada;
+    return Proposta(
+      id: propostaCriada.id,
+      orcamentoId: propostaCriada.orcamentoId,
+      valorEstimado: propostaCriada.valorEstimado,
+      prazoEntrega: propostaCriada.prazoEntrega,
+      observacoes: propostaCriada.observacoes,
+      dataEnvio: propostaCriada.dataEnvio,
+      agendamento: agendamento,
+    );
   }
 }

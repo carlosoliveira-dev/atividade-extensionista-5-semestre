@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'package:postgres/postgres.dart';
+import '../../core/config/database_config.dart';
 import '../models/agendamento_model.dart';
 import '../models/foto_orcamento_model.dart';
 import '../models/orcamento_model.dart';
 import '../models/proposta_model.dart';
+import '../../domain/entities/agendamento.dart';
 import '../../domain/entities/orcamento.dart';
 
 class DatabaseDatasource {
@@ -17,19 +18,15 @@ class DatabaseDatasource {
   DatabaseDatasource();
 
   Future<void> inicializar() async {
-    final host = Platform.environment['DB_HOST'] ?? 'localhost';
-    final port = int.parse(Platform.environment['DB_PORT'] ?? '5432');
-    final dbName = Platform.environment['DB_NAME'] ?? 'impactcar_db';
-    final user = Platform.environment['DB_USER'] ?? 'postgres';
-    final password = Platform.environment['DB_PASSWORD'] ?? 'postgrespassword';
+    final config = DatabaseConfig.carregar();
 
     try {
       final endpoint = Endpoint(
-        host: host,
-        port: port,
-        database: dbName,
-        username: user,
-        password: password,
+        host: config.host,
+        port: config.port,
+        database: config.dbName,
+        username: config.user,
+        password: config.password,
       );
 
       _connection = await Connection.open(
@@ -40,7 +37,7 @@ class DatabaseDatasource {
       );
 
       _usePostgres = true;
-      print('✅ Conectado com sucesso ao PostgreSQL ($dbName@$host:$port)');
+      print('✅ Conectado com sucesso ao PostgreSQL (${config.dbName}@${config.host}:${config.port})');
     } catch (e) {
       _usePostgres = false;
       print('ℹ️ PostgreSQL não conectado ($e). Utilizando armazenamento local em memória.');
@@ -261,7 +258,7 @@ class DatabaseDatasource {
           'propId': agendamento.propostaId,
           'extId': agendamento.idEventoExterno,
           'data': agendamento.dataHorarioMarcados,
-          'status': agendamento.status,
+          'status': agendamento.status.name,
         },
       );
       return agendamento;
@@ -281,7 +278,10 @@ class DatabaseDatasource {
           propostaId: map['proposta_id'] as String,
           idEventoExterno: map['id_evento_externo'] as String,
           dataHorarioMarcados: map['data_horario_marcados'] as DateTime,
-          status: map['status'] as String,
+          status: StatusAgendamento.values.firstWhere(
+            (e) => e.name == (map['status'] as String),
+            orElse: () => StatusAgendamento.confirmado,
+          ),
         );
       }).toList();
     } else {

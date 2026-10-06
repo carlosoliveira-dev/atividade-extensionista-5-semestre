@@ -26,14 +26,17 @@ class OrcamentoController {
       final id = 'orc_${DateTime.now().millisecondsSinceEpoch}';
       final fotosJson = (data['fotos'] as List<dynamic>?) ?? [];
 
+      int fotoIndex = 0;
       final fotos = fotosJson.map((f) {
+        fotoIndex++;
         final fMap = f as Map<String, dynamic>;
+        final ordemCat = fMap['ordemCategoria'] as String? ?? fMap['ordemCategory'] as String? ?? 'Foto';
         return FotoOrcamento(
-          id: 'foto_${DateTime.now().millisecondsSinceEpoch}_${fMap['ordemCategory']}',
+          id: 'foto_${DateTime.now().microsecondsSinceEpoch}_$fotoIndex',
           orcamentoId: id,
           caminhoArquivo: fMap['caminhoArquivo'] as String? ?? 'uploads/default.jpg',
           urlAcesso: fMap['urlAcesso'] as String? ?? fMap['caminhoArquivo'] as String? ?? 'uploads/default.jpg',
-          ordemCategoria: fMap['ordemCategoria'] as String? ?? 'Foto',
+          ordemCategoria: ordemCat,
         );
       }).toList();
 

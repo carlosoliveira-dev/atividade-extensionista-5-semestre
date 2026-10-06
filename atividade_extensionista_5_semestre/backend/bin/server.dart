@@ -12,6 +12,7 @@ import 'package:backend/src/data/repositories/proposta_repository_impl.dart';
 import 'package:backend/src/domain/usecases/consultar_horarios_livres_usecase.dart';
 import 'package:backend/src/domain/usecases/criar_orcamento_usecase.dart';
 import 'package:backend/src/domain/usecases/emitir_proposta_usecase.dart';
+import 'package:backend/src/domain/usecases/listar_agendamentos_usecase.dart';
 import 'package:backend/src/domain/usecases/listar_orcamentos_pendentes_usecase.dart';
 import 'package:backend/src/domain/usecases/obter_orcamento_usecase.dart';
 import 'package:backend/src/presentation/controllers/orcamento_controller.dart';
@@ -34,6 +35,7 @@ void main(List<String> args) async {
   final criarOrcamentoUseCase = CriarOrcamentoUseCase(orcamentoRepository);
   final listarPendentesUseCase = ListarOrcamentosPendentesUseCase(orcamentoRepository);
   final obterOrcamentoUseCase = ObterOrcamentoUseCase(orcamentoRepository);
+  final listarAgendamentosUseCase = ListarAgendamentosUseCase(agendamentoRepository);
 
   final emitirPropostaUseCase = EmitirPropostaUseCase(
     orcamentoRepository: orcamentoRepository,
@@ -52,6 +54,7 @@ void main(List<String> args) async {
   final propostaController = PropostaController(
     emitirPropostaUseCase: emitirPropostaUseCase,
     consultarHorariosLivresUseCase: consultarHorariosUseCase,
+    listarAgendamentosUseCase: listarAgendamentosUseCase,
   );
 
   final apiRouter = buildApiRouter(

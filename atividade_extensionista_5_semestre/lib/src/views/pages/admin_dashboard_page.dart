@@ -27,6 +27,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         title: const Text('Painel do Chapeador'),
         actions: [
           IconButton(
+            tooltip: 'Agenda de Serviços',
+            icon: const Icon(Icons.calendar_month_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/agendamentos');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _controller.carregarPendentes,
           ),

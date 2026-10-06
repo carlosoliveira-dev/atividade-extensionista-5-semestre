@@ -1,4 +1,4 @@
-# Guia de Configuração do PostgreSQL Local (Sem Docker) - Impact Car
+# Guia de Configuração do PostgreSQL Local - Impact Car
 
 Este guia descreve como instalar, configurar e criar o banco de dados PostgreSQL localmente para executar o backend em Dart.
 

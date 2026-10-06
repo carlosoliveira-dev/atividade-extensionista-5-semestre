@@ -16,6 +16,7 @@ Router buildApiRouter({
   // Rotas de Proposta e Agenda (Google Calendar)
   router.post('/api/propostas', propostaController.emitir);
   router.get('/api/calendar/horarios-livres', propostaController.consultarHorariosLivres);
+  router.get('/api/agendamentos', propostaController.listarAgendamentos);
 
   return router;
 }

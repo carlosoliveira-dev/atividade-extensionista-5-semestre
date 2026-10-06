@@ -1,4 +1,5 @@
 import '../core/constants/api_constants.dart';
+import '../models/agendamento_model.dart';
 import '../models/orcamento_model.dart';
 import '../models/proposta_model.dart';
 import '../services/api_service.dart';
@@ -55,6 +56,15 @@ class OrcamentoRepository {
     if (response['success'] == true && response['data'] != null) {
       final list = response['data'] as List<dynamic>;
       return list.map((item) => DateTime.parse(item as String)).toList();
+    }
+    return [];
+  }
+
+  Future<List<AgendamentoModel>> buscarAgendamentos() async {
+    final response = await apiService.get(ApiConstants.agendamentos);
+    if (response['success'] == true && response['data'] != null) {
+      final list = response['data'] as List<dynamic>;
+      return list.map((item) => AgendamentoModel.fromJson(item as Map<String, dynamic>)).toList();
     }
     return [];
   }

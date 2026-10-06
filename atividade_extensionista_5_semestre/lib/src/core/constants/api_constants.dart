@@ -4,4 +4,5 @@ class ApiConstants {
   static const String orcamentosPendentes = '$baseUrl/api/orcamentos/pendentes';
   static const String propostas = '$baseUrl/api/propostas';
   static const String horariosLivres = '$baseUrl/api/calendar/horarios-livres';
+  static const String agendamentos = '$baseUrl/api/agendamentos';
 }

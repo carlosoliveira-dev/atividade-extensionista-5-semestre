@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
+import '../../data/models/agendamento_model.dart';
 import '../../data/models/proposta_model.dart';
 import '../../domain/usecases/consultar_horarios_livres_usecase.dart';
 import '../../domain/usecases/emitir_proposta_usecase.dart';
+import '../../domain/usecases/listar_agendamentos_usecase.dart';
 
 class PropostaController {
   final EmitirPropostaUseCase emitirPropostaUseCase;
   final ConsultarHorariosLivresUseCase consultarHorariosLivresUseCase;
+  final ListarAgendamentosUseCase? listarAgendamentosUseCase;
 
   PropostaController({
     required this.emitirPropostaUseCase,
     required this.consultarHorariosLivresUseCase,
+    this.listarAgendamentosUseCase,
   });
 
   Future<Response> emitir(Request request) async {
@@ -72,6 +76,37 @@ class PropostaController {
       );
     } catch (e) {
       return Response.badRequest(
+        body: jsonEncode({
+          'success': false,
+          'data': null,
+          'error': e.toString(),
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    }
+  }
+
+  Future<Response> listarAgendamentos(Request request) async {
+    try {
+      if (listarAgendamentosUseCase == null) {
+        return Response.ok(
+          jsonEncode({'success': true, 'data': [], 'error': null}),
+          headers: {'content-type': 'application/json'},
+        );
+      }
+      final lista = await listarAgendamentosUseCase!.execute();
+      final models = lista.map((a) => AgendamentoModel.fromEntity(a).toJson()).toList();
+
+      return Response.ok(
+        jsonEncode({
+          'success': true,
+          'data': models,
+          'error': null,
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    } catch (e) {
+      return Response.internalServerError(
         body: jsonEncode({
           'success': false,
           'data': null,

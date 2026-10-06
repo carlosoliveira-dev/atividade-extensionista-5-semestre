@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/views/pages/admin_dashboard_page.dart';
+import 'src/views/pages/agendamentos_page.dart';
 import 'src/views/pages/home_page.dart';
 import 'src/views/pages/novo_orcamento_page.dart';
 import 'src/views/pages/sucesso_page.dart';
@@ -24,6 +25,7 @@ class ImpactCarApp extends StatelessWidget {
         '/novo_orcamento': (context) => const NovoOrcamentoPage(),
         '/sucesso': (context) => const SucessoPage(),
         '/admin': (context) => const AdminDashboardPage(),
+        '/agendamentos': (context) => const AgendamentosPage(),
       },
     );
   }

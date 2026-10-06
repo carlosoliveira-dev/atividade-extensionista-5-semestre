@@ -16,6 +16,13 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            tooltip: 'Agenda de Serviços',
+            icon: const Icon(Icons.calendar_month_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/agendamentos');
+            },
+          ),
+          IconButton(
             tooltip: 'Painel do Profissional (Chapeador)',
             icon: const Icon(Icons.admin_panel_settings_outlined),
             onPressed: () {
@@ -87,6 +94,14 @@ class HomePage extends StatelessWidget {
                 label: const Text('Acessar Fila do Chapeador'),
                 onPressed: () {
                   Navigator.pushNamed(context, '/admin');
+                },
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: const Text('Ver Agenda de Serviços (Google Calendar)'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/agendamentos');
                 },
               ),
               const SizedBox(height: 36),

@@ -9,6 +9,103 @@ class AppTheme {
   static const Color tertiaryColor = Color(0xFF6750A4);
   static const Color backgroundColor = Color(0xFFF8FDFF);
 
+  static void abrirMenuAcessibilidade(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.accessibility_new_outlined, size: 28),
+                SizedBox(width: 12),
+                Text(
+                  'Painel de Acessibilidade',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text('Aparência / Tema', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: themeModeNotifier,
+              builder: (context, themeMode, _) {
+                return SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(
+                      value: ThemeMode.light,
+                      label: Text('Claro'),
+                      icon: Icon(Icons.light_mode_outlined),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.dark,
+                      label: Text('Escuro'),
+                      icon: Icon(Icons.dark_mode_outlined),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      label: Text('Sistema'),
+                      icon: Icon(Icons.brightness_auto_outlined),
+                    ),
+                  ],
+                  selected: {themeMode},
+                  onSelectionChanged: (newSelection) {
+                    themeModeNotifier.value = newSelection.first;
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+            const Text('Tamanho da Fonte', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<double>(
+              valueListenable: textScaleFactorNotifier,
+              builder: (context, scale, _) {
+                final percent = (scale * 100).round();
+                return Column(
+                  children: [
+                    Text('$percent%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FilledButton.tonalIcon(
+                          icon: const Icon(Icons.remove),
+                          label: const Text('Menor'),
+                          onPressed: scale > 0.8
+                              ? () => textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
+                              : null,
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: () => textScaleFactorNotifier.value = 1.0,
+                          child: const Text('Padrão'),
+                        ),
+                        const SizedBox(width: 12),
+                        FilledButton.tonalIcon(
+                          icon: const Icon(Icons.add),
+                          label: const Text('Maior'),
+                          onPressed: scale < 1.6
+                              ? () => textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
+                              : null,
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

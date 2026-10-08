@@ -1,69 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../../core/theme/app_theme.dart';
 
-class ChapeadorHubPage extends StatelessWidget {
+class ChapeadorHubPage extends StatefulWidget {
   const ChapeadorHubPage({super.key});
 
-  void _mostrarDialogoAcessibilidade(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.accessibility_new_outlined),
-            SizedBox(width: 8),
-            Text('Acessibilidade - Fonte'),
-          ],
-        ),
-        content: ValueListenableBuilder<double>(
-          valueListenable: AppTheme.textScaleFactorNotifier,
-          builder: (context, scale, _) {
-            final percent = (scale * 100).round();
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Tamanho atual: $percent%',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton.filledTonal(
-                      tooltip: 'Diminuir Fonte',
-                      icon: const Icon(Icons.remove),
-                      onPressed: scale > 0.8
-                          ? () => AppTheme.textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    OutlinedButton(
-                      onPressed: () => AppTheme.textScaleFactorNotifier.value = 1.0,
-                      child: const Text('Padrão'),
-                    ),
-                    const SizedBox(width: 16),
-                    IconButton.filledTonal(
-                      tooltip: 'Aumentar Fonte',
-                      icon: const Icon(Icons.add),
-                      onPressed: scale < 1.6
-                          ? () => AppTheme.textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
-                          : null,
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar'),
-          ),
-        ],
-      ),
-    );
+  @override
+  State<ChapeadorHubPage> createState() => _ChapeadorHubPageState();
+}
+
+class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isFabVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (_isFabVisible) {
+          setState(() => _isFabVisible = false);
+        }
+      } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        if (!_isFabVisible) {
+          setState(() => _isFabVisible = true);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,31 +42,24 @@ class ChapeadorHubPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Área do Chapeador'),
-        actions: [
-          IconButton(
-            tooltip: 'Acessibilidade (Tamanho da Fonte)',
-            icon: const Icon(Icons.text_fields_rounded),
-            onPressed: () => _mostrarDialogoAcessibilidade(context),
+      ),
+      floatingActionButton: AnimatedSlide(
+        duration: const Duration(milliseconds: 200),
+        offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _isFabVisible ? 1.0 : 0.0,
+          child: FloatingActionButton.extended(
+            onPressed: _isFabVisible ? () => AppTheme.abrirMenuAcessibilidade(context) : null,
+            icon: const Icon(Icons.accessibility_new_rounded),
+            label: const Text('Acessibilidade'),
+            tooltip: 'Abrir painel de acessibilidade e temas',
           ),
-          IconButton(
-            tooltip: 'Alternar Tema (Claro/Escuro)',
-            icon: Icon(
-              Theme.of(context).brightness == Brightness.dark
-                  ? Icons.light_mode_outlined
-                  : Icons.dark_mode_outlined,
-            ),
-            onPressed: () {
-              if (AppTheme.themeModeNotifier.value == ThemeMode.dark) {
-                AppTheme.themeModeNotifier.value = ThemeMode.light;
-              } else {
-                AppTheme.themeModeNotifier.value = ThemeMode.dark;
-              }
-            },
-          ),
-        ],
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -115,7 +77,7 @@ class ChapeadorHubPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Painel do Profissional (Acesso Direterto)',
+                        'Painel do Profissional (Acesso Direto)',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

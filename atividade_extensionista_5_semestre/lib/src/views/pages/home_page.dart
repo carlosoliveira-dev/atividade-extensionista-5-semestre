@@ -1,70 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/ods_badge.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  void _mostrarDialogoAcessibilidade(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.accessibility_new_outlined),
-            SizedBox(width: 8),
-            Text('Acessibilidade - Fonte'),
-          ],
-        ),
-        content: ValueListenableBuilder<double>(
-          valueListenable: AppTheme.textScaleFactorNotifier,
-          builder: (context, scale, _) {
-            final percent = (scale * 100).round();
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Tamanho atual: $percent%',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton.filledTonal(
-                      tooltip: 'Diminuir Fonte',
-                      icon: const Icon(Icons.remove),
-                      onPressed: scale > 0.8
-                          ? () => AppTheme.textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    OutlinedButton(
-                      onPressed: () => AppTheme.textScaleFactorNotifier.value = 1.0,
-                      child: const Text('Padrão'),
-                    ),
-                    const SizedBox(width: 16),
-                    IconButton.filledTonal(
-                      tooltip: 'Aumentar Fonte',
-                      icon: const Icon(Icons.add),
-                      onPressed: scale < 1.6
-                          ? () => AppTheme.textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
-                          : null,
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar'),
-          ),
-        ],
-      ),
-    );
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isFabVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (_isFabVisible) {
+          setState(() => _isFabVisible = false);
+        }
+      } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        if (!_isFabVisible) {
+          setState(() => _isFabVisible = true);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,29 +48,6 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            tooltip: 'Acessibilidade (Tamanho da Fonte)',
-            icon: const Icon(Icons.text_fields_rounded),
-            onPressed: () => _mostrarDialogoAcessibilidade(context),
-          ),
-          IconButton(
-            tooltip: 'Alternar Tema (Claro/Escuro)',
-            icon: Icon(
-              Theme.of(context).brightness == Brightness.dark
-                  ? Icons.light_mode_outlined
-                  : Icons.dark_mode_outlined,
-            ),
-            onPressed: () {
-              if (AppTheme.textScaleFactorNotifier.value >= 0) { // Keep AppTheme imported
-                // Toggle theme
-              }
-              if (AppTheme.themeModeNotifier.value == ThemeMode.dark) {
-                AppTheme.themeModeNotifier.value = ThemeMode.light;
-              } else {
-                AppTheme.themeModeNotifier.value = ThemeMode.dark;
-              }
-            },
-          ),
-          IconButton(
             tooltip: 'Área do Chapeador',
             icon: const Icon(Icons.engineering_outlined),
             onPressed: () {
@@ -110,14 +56,29 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: AnimatedSlide(
+        duration: const Duration(milliseconds: 200),
+        offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _isFabVisible ? 1.0 : 0.0,
+          child: FloatingActionButton.extended(
+            onPressed: _isFabVisible ? () => AppTheme.abrirMenuAcessibilidade(context) : null,
+            icon: const Icon(Icons.accessibility_new_rounded),
+            label: const Text('Acessibilidade'),
+            tooltip: 'Abrir painel de acessibilidade e temas',
+          ),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 10),
-              // Hero Section
+              // Hero Section with centered workshop name
               Card(
                 color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
                 child: Padding(
@@ -130,6 +91,17 @@ class HomePage extends StatelessWidget {
                         color: theme.colorScheme.primary,
                       ),
                       const SizedBox(height: 16),
+                      // Workshop Name Centered
+                      Text(
+                        'IMPACT CAR',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         'Funilaria & Pintura — Orçamento Rápido',
                         textAlign: TextAlign.center,
@@ -175,35 +147,53 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              // Call to action button (Client)
-              FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  backgroundColor: theme.colorScheme.primary,
+              // Centered Call to action button (Client)
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 450),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+                        backgroundColor: theme.colorScheme.primary,
+                      ),
+                      icon: const Icon(Icons.add_a_photo_rounded, size: 22),
+                      label: const Text(
+                        'Solicitar Orçamento sem Cadastro',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/novo_orcamento');
+                      },
+                    ),
+                  ),
                 ),
-                icon: const Icon(Icons.add_a_photo_rounded, size: 22),
-                label: const Text(
-                  'Solicitar Orçamento sem Cadastro',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/novo_orcamento');
-                },
               ),
               const SizedBox(height: 16),
-              // Chapeador Access Button (No login for now)
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              // Centered Chapeador Access Button
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 450),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      ),
+                      icon: const Icon(Icons.engineering_outlined),
+                      label: const Text(
+                        'Acesso do Chapeador (Painel / Oficina)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/chapeador_hub');
+                      },
+                    ),
+                  ),
                 ),
-                icon: const Icon(Icons.engineering_outlined),
-                label: const Text(
-                  'Acesso do Chapeador (Painel / Oficina)',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/chapeador_hub');
-                },
               ),
               const SizedBox(height: 36),
               const Divider(),

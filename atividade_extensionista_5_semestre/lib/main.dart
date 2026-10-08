@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'src/core/constants/api_constants.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/views/pages/admin_dashboard_page.dart';
 import 'src/views/pages/agendamentos_page.dart';
@@ -6,7 +7,9 @@ import 'src/views/pages/home_page.dart';
 import 'src/views/pages/novo_orcamento_page.dart';
 import 'src/views/pages/sucesso_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApiConstants.loadEnv();
   runApp(const ImpactCarApp());
 }
 

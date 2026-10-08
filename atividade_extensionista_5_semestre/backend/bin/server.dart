@@ -82,5 +82,10 @@ void main(List<String> args) async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
   final server = await io.serve(handler, ip, port);
-  print('Servidor Backend Impact Car iniciado em http://${server.address.host}:${server.port}');
+  print('====================================================');
+  print('🚀 Servidor Backend Impact Car Ativo na Porta $port!');
+  print('   • Local PC:         http://localhost:$port');
+  print('   • Emulador Android: http://10.0.2.2:$port');
+  print('   • Escutando em:     http://${server.address.address}:$port (Todas as placas de rede/Wi-Fi)');
+  print('====================================================');
 }

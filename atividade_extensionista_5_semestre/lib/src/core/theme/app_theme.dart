@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.system);
+  static final ValueNotifier<double> textScaleFactorNotifier = ValueNotifier(1.0);
 
   static const Color primaryColor = Color(0xFF005AC1);
   static const Color secondaryColor = Color(0xFF006874);

@@ -4,6 +4,68 @@ import '../../core/theme/app_theme.dart';
 class ChapeadorHubPage extends StatelessWidget {
   const ChapeadorHubPage({super.key});
 
+  void _mostrarDialogoAcessibilidade(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.accessibility_new_outlined),
+            SizedBox(width: 8),
+            Text('Acessibilidade - Fonte'),
+          ],
+        ),
+        content: ValueListenableBuilder<double>(
+          valueListenable: AppTheme.textScaleFactorNotifier,
+          builder: (context, scale, _) {
+            final percent = (scale * 100).round();
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Tamanho atual: $percent%',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton.filledTonal(
+                      tooltip: 'Diminuir Fonte',
+                      icon: const Icon(Icons.remove),
+                      onPressed: scale > 0.8
+                          ? () => AppTheme.textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
+                          : null,
+                    ),
+                    const SizedBox(width: 16),
+                    OutlinedButton(
+                      onPressed: () => AppTheme.textScaleFactorNotifier.value = 1.0,
+                      child: const Text('Padrão'),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton.filledTonal(
+                      tooltip: 'Aumentar Fonte',
+                      icon: const Icon(Icons.add),
+                      onPressed: scale < 1.6
+                          ? () => AppTheme.textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
+                          : null,
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -12,6 +74,11 @@ class ChapeadorHubPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Área do Chapeador'),
         actions: [
+          IconButton(
+            tooltip: 'Acessibilidade (Tamanho da Fonte)',
+            icon: const Icon(Icons.text_fields_rounded),
+            onPressed: () => _mostrarDialogoAcessibilidade(context),
+          ),
           IconButton(
             tooltip: 'Alternar Tema (Claro/Escuro)',
             icon: Icon(
@@ -48,7 +115,7 @@ class ChapeadorHubPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Painel do Profissional (Acesso Direto)',
+                        'Painel do Profissional (Acesso Direterto)',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

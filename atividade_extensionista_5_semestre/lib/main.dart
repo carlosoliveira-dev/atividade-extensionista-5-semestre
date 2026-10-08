@@ -22,20 +22,33 @@ class ImpactCarApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: AppTheme.themeModeNotifier,
       builder: (context, themeMode, _) {
-        return MaterialApp(
-          title: 'Impact Car - Triagem & Orçamento',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          initialRoute: '/',
-          routes: {
-            '/': (context) => const HomePage(),
-            '/novo_orcamento': (context) => const NovoOrcamentoPage(),
-            '/sucesso': (context) => const SucessoPage(),
-            '/chapeador_hub': (context) => const ChapeadorHubPage(),
-            '/admin': (context) => const AdminDashboardPage(),
-            '/agendamentos': (context) => const AgendamentosPage(),
+        return ValueListenableBuilder<double>(
+          valueListenable: AppTheme.textScaleFactorNotifier,
+          builder: (context, textScale, child) {
+            return MaterialApp(
+              title: 'Impact Car - Triagem & Orçamento',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              builder: (context, widget) {
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(textScale),
+                  ),
+                  child: widget ?? const SizedBox.shrink(),
+                );
+              },
+              initialRoute: '/',
+              routes: {
+                '/': (context) => const HomePage(),
+                '/novo_orcamento': (context) => const NovoOrcamentoPage(),
+                '/sucesso': (context) => const SucessoPage(),
+                '/chapeador_hub': (context) => const ChapeadorHubPage(),
+                '/admin': (context) => const AdminDashboardPage(),
+                '/agendamentos': (context) => const AgendamentosPage(),
+              },
+            );
           },
         );
       },

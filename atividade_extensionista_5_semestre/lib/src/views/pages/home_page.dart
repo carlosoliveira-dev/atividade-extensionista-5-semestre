@@ -16,17 +16,10 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            tooltip: 'Agenda de Serviços',
-            icon: const Icon(Icons.calendar_month_outlined),
+            tooltip: 'Área do Chapeador',
+            icon: const Icon(Icons.engineering_outlined),
             onPressed: () {
-              Navigator.pushNamed(context, '/agendamentos');
-            },
-          ),
-          IconButton(
-            tooltip: 'Painel do Profissional (Chapeador)',
-            icon: const Icon(Icons.admin_panel_settings_outlined),
-            onPressed: () {
-              Navigator.pushNamed(context, '/admin');
+              Navigator.pushNamed(context, '/chapeador_hub');
             },
           ),
         ],
@@ -73,7 +66,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              // Call to action button
+              // Call to action button (Client)
               FilledButton.icon(
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 18),
@@ -88,20 +81,19 @@ class HomePage extends StatelessWidget {
                   Navigator.pushNamed(context, '/novo_orcamento');
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
+              // Chapeador Access Button (No login for now)
               OutlinedButton.icon(
-                icon: const Icon(Icons.dashboard_outlined),
-                label: const Text('Acessar Fila do Chapeador'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                icon: const Icon(Icons.engineering_outlined),
+                label: const Text(
+                  'Acesso do Chapeador (Painel / Oficina)',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/admin');
-                },
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton.icon(
-                icon: const Icon(Icons.calendar_month_outlined),
-                label: const Text('Ver Agenda de Serviços (Google Calendar)'),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/agendamentos');
+                  Navigator.pushNamed(context, '/chapeador_hub');
                 },
               ),
               const SizedBox(height: 36),

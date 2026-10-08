@@ -153,20 +153,96 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton.icon(
-                            icon: const Icon(Icons.rate_review_outlined),
-                            label: const Text('Avaliar e Enviar Orçamento'),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) => EmitirPropostaDialog(
-                                  orcamento: item,
-                                  controller: _controller,
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outlineVariant,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.admin_panel_settings, size: 16, color: Theme.of(context).colorScheme.primary),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Área de Ações do Chapeador',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton.icon(
+                                  icon: const Icon(Icons.rate_review_outlined),
+                                  label: const Text('Avaliar e Enviar Orçamento'),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => EmitirPropostaDialog(
+                                        orcamento: item,
+                                        controller: _controller,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      icon: const Icon(Icons.phone_outlined, size: 16),
+                                      label: const Text('Contato'),
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Contato do cliente: ${item.clienteTelefone}')),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      icon: const Icon(Icons.info_outline, size: 16),
+                                      label: const Text('Detalhes'),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title: Text('Detalhes: ${item.veiculoModelo}'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Cliente: ${item.clienteNome}'),
+                                                Text('Telefone: ${item.clienteTelefone}'),
+                                                Text('Placa: ${item.veiculoPlaca}'),
+                                                Text('Data: ${DateFormat('dd/MM/yyyy HH:mm').format(item.dataCriacao)}'),
+                                                const SizedBox(height: 8),
+                                                const Text('Relato:', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                Text(item.descricaoDano.isEmpty ? 'Nenhum' : item.descricaoDano),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text('Fechar'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ],

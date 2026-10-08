@@ -105,17 +105,43 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                         Text('ID Proposta: ${item.propostaId}'),
                         Text('ID Google Calendar: ${item.idEventoExterno}'),
                         const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.blue.shade700,
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outlineVariant,
                             ),
-                            icon: const Icon(Icons.event),
-                            label: const Text('Adicionar ao Google Calendar'),
-                            onPressed: () {
-                              _controller.adicionarAoGoogleCalendar(item);
-                            },
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.calendar_month, size: 16, color: Theme.of(context).colorScheme.primary),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Gerenciamento de Agenda (Chapeador)',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.blue.shade700,
+                                  ),
+                                  icon: const Icon(Icons.event),
+                                  label: const Text('Adicionar ao Google Calendar'),
+                                  onPressed: () {
+                                    _controller.adicionarAoGoogleCalendar(item);
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

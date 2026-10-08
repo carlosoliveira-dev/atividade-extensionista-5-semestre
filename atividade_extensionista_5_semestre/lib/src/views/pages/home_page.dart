@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme.dart';
 import '../widgets/ods_badge.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,6 +16,21 @@ class HomePage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          IconButton(
+            tooltip: 'Alternar Tema (Claro/Escuro)',
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+            ),
+            onPressed: () {
+              if (AppTheme.themeModeNotifier.value == ThemeMode.dark) {
+                AppTheme.themeModeNotifier.value = ThemeMode.light;
+              } else {
+                AppTheme.themeModeNotifier.value = ThemeMode.dark;
+              }
+            },
+          ),
           IconButton(
             tooltip: 'Área do Chapeador',
             icon: const Icon(Icons.engineering_outlined),
@@ -45,7 +61,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Funilaria & Pintura Assíncrona',
+                        'Funilaria & Pintura — Orçamento Rápido',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -54,12 +70,35 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Precisa de um orçamento rápido sem sair de casa? Envie de 3 a 5 fotos do dano e receba a avaliação do especialista diretamente no seu WhatsApp.',
+                        'Precisa de um orçamento rápido sem sair de casa? Envie de 3 a 5 fotos do dano e receba a avaliação do especialista diretamente.',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           height: 1.4,
                         ),
+                      ),
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          Chip(
+                            avatar: const Icon(Icons.flash_on, size: 16),
+                            label: const Text('Sem Fila'),
+                            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          ),
+                          Chip(
+                            avatar: const Icon(Icons.lock_open, size: 16),
+                            label: const Text('Sem Cadastro'),
+                            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          ),
+                          Chip(
+                            avatar: const Icon(Icons.photo_camera, size: 16),
+                            label: const Text('Envio de Fotos'),
+                            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          ),
+                        ],
                       ),
                     ],
                   ),

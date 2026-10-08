@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme.dart';
 
 class ChapeadorHubPage extends StatelessWidget {
   const ChapeadorHubPage({super.key});
@@ -10,6 +11,23 @@ class ChapeadorHubPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Área do Chapeador'),
+        actions: [
+          IconButton(
+            tooltip: 'Alternar Tema (Claro/Escuro)',
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+            ),
+            onPressed: () {
+              if (AppTheme.themeModeNotifier.value == ThemeMode.dark) {
+                AppTheme.themeModeNotifier.value = ThemeMode.light;
+              } else {
+                AppTheme.themeModeNotifier.value = ThemeMode.dark;
+              }
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(

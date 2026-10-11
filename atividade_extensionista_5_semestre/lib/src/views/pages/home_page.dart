@@ -195,6 +195,31 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
+              // About and Project Details Navigation Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.info_outline),
+                      label: const Text('Sobre o Projeto'),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/sobre');
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.architecture),
+                      label: const Text('Detalhes & Arquitetura'),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/detalhes');
+                      },
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 36),
               const Divider(),
               const SizedBox(height: 16),

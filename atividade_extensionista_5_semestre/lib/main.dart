@@ -5,8 +5,10 @@ import 'src/views/pages/admin_dashboard_page.dart';
 import 'src/views/pages/agendamentos_page.dart';
 import 'src/views/pages/chapeador_hub_page.dart';
 import 'src/views/pages/chapeador_login_page.dart';
+import 'src/views/pages/detalhes_projeto_page.dart';
 import 'src/views/pages/home_page.dart';
 import 'src/views/pages/novo_orcamento_page.dart';
+import 'src/views/pages/sobre_page.dart';
 import 'src/views/pages/sucesso_page.dart';
 
 void main() async {
@@ -49,6 +51,8 @@ class ImpactCarApp extends StatelessWidget {
                 '/chapeador_login': (context) => const ChapeadorLoginPage(),
                 '/admin': (context) => const AdminDashboardPage(),
                 '/agendamentos': (context) => const AgendamentosPage(),
+                '/sobre': (context) => const SobrePage(),
+                '/detalhes': (context) => const DetalhesProjetoPage(),
               },
             );
           },

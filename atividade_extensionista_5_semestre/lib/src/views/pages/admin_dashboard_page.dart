@@ -156,7 +156,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.outlineVariant,

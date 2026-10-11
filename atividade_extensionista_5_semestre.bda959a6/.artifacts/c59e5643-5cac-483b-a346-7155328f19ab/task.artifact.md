@@ -1,0 +1,6 @@
+- `[ ]` Configurar dependência `google_sign_in` no Flutter
+- `[ ]` Criar tela de Login do Chapeador (Google Sign-In)
+- `[ ]` Adaptar o Backend (Clean Architecture) para receber e validar o token OAuth
+- `[ ]` Atualizar o Datasource do Google Calendar para usar o token dinâmico do chapeador
+- `[ ]` Proteger a rota do Painel Administrativo no Frontend
+- `[ ]` Validar a compilação e testes estáticos

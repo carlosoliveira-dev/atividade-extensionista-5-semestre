@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import '../../controllers/chapeador_auth_controller.dart';
 import '../../core/theme/app_theme.dart';
 
 class ChapeadorHubPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class ChapeadorHubPage extends StatefulWidget {
 
 class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
   final ScrollController _scrollController = ScrollController();
+  final _authController = ChapeadorAuthController();
   bool _isFabVisible = true;
 
   @override
@@ -42,6 +44,34 @@ class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Área do Chapeador'),
+        actions: [
+          ListenableBuilder(
+            listenable: _authController,
+            builder: (context, _) {
+              if (_authController.isLoggedIn) {
+                return IconButton(
+                  tooltip: 'Sair da Conta',
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await _authController.signOut();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Sessão encerrada com sucesso.')),
+                      );
+                    }
+                  },
+                );
+              }
+              return IconButton(
+                tooltip: 'Fazer Login',
+                icon: const Icon(Icons.login),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/chapeador_login');
+                },
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: AnimatedSlide(
         duration: const Duration(milliseconds: 200),
@@ -77,17 +107,29 @@ class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Painel do Profissional (Acesso Direto)',
+                        'Painel do Profissional',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Gerencie os orçamentos enviados pelos clientes e consulte a sua agenda de serviços integrada.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: Colors.black87),
+                      ListenableBuilder(
+                        listenable: _authController,
+                        builder: (context, _) {
+                          if (_authController.isLoggedIn) {
+                            return Text(
+                              'Logado como: ${_authController.currentUser?.displayName ?? _authController.currentUser?.email}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.green),
+                            );
+                          }
+                          return const Text(
+                            'Status: Não autenticado. Faça login com o Google para gerenciar orçamentos e sincronizar a agenda.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 13, color: Colors.black87),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -104,7 +146,11 @@ class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/admin');
+                  if (_authController.isLoggedIn) {
+                    Navigator.pushNamed(context, '/admin');
+                  } else {
+                    Navigator.pushNamed(context, '/chapeador_login');
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -119,7 +165,11 @@ class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/agendamentos');
+                  if (_authController.isLoggedIn) {
+                    Navigator.pushNamed(context, '/agendamentos');
+                  } else {
+                    Navigator.pushNamed(context, '/chapeador_login');
+                  }
                 },
               ),
             ],

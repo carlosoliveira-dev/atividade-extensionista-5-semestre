@@ -39,3 +39,17 @@ CREATE TABLE IF NOT EXISTS agendamentos (
     data_horario_marcados TIMESTAMP NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'confirmado'
 );
+
+-- 5. Tabela: chapeadores (Autenticação do Profissional)
+CREATE TABLE IF NOT EXISTS chapeadores (
+    id VARCHAR(50) PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(100) NOT NULL,
+    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Inserir chapeador padrão de teste (E-mail: chapeador@impactcar.com / Senha: 123456)
+INSERT INTO chapeadores (id, nome, email, senha)
+VALUES ('chapeador_default_1', 'Chapeador Principal', 'chapeador@impactcar.com', '123456')
+ON CONFLICT (email) DO NOTHING;

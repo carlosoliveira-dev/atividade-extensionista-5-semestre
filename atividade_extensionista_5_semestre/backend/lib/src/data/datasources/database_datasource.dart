@@ -1,6 +1,7 @@
 import 'package:postgres/postgres.dart';
 import '../../core/config/database_config.dart';
 import '../models/agendamento_model.dart';
+import '../models/chapeador_model.dart';
 import '../models/foto_orcamento_model.dart';
 import '../models/orcamento_model.dart';
 import '../models/proposta_model.dart';
@@ -286,6 +287,27 @@ class DatabaseDatasource {
       }).toList();
     } else {
       return List.unmodifiable(_memoryAgendamentos);
+    }
+  }
+
+  Future<ChapeadorModel?> buscarChapeadorPorEmail(String email) async {
+    if (_usePostgres && _connection != null) {
+      final rows = await _connection!.execute(
+        Sql.named('SELECT * FROM chapeadores WHERE email = @email'),
+        parameters: {'email': email},
+      );
+      if (rows.isEmpty) return null;
+      return ChapeadorModel.fromMap(rows.first.toColumnMap());
+    } else {
+      if (email == 'chapeador@impactcar.com') {
+        return const ChapeadorModel(
+          id: 'chapeador_default_1',
+          nome: 'Chapeador Principal',
+          email: 'chapeador@impactcar.com',
+          senha: '123456',
+        );
+      }
+      return null;
     }
   }
 }

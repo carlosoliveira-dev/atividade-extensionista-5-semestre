@@ -52,8 +52,13 @@ dart compile exe bin/server.dart -o server
 ```
 - Isso gerará um arquivo executável otimizado chamado `server`.
 
-### 2. Configuração do Ambiente de Produção (`.env`)
-Na mesma pasta onde o executável `server` foi gerado no servidor, crie o arquivo `.env` de produção contendo as credenciais reais do PostgreSQL e do Google Calendar:
+### 2. Configuração do Banco de Dados e Autenticação
+Certifique-se de executar o script [schema.sql](file:///C:/Users/trade/AndroidStudioProjects/Atividade%20Extensionista%205%20Semestre/atividade_extensionista_5_semestre/backend/schema.sql) no seu banco de dados PostgreSQL para criar todas as tabelas necessárias, incluindo a tabela `chapeadores` responsável pela autenticação do painel administrativo.
+- Credencial padrão de acesso cadastrada automaticamente pelo script:
+  - **E-mail**: `chapeador@impactcar.com`
+  - **Senha**: `123456`
+
+Na mesma pasta onde o executável `server` foi gerado no servidor, crie o arquivo `.env` de produção contendo as credenciais reais do PostgreSQL:
 ```env
 PORT=8080
 DB_HOST=localhost
@@ -61,7 +66,6 @@ DB_PORT=5432
 DB_NAME=impact_car_db
 DB_USER=postgres
 DB_PASSWORD=sua_senha_segura_aqui
-GOOGLE_CALENDAR_CREDENTIALS_PATH=credentials.json
 ```
 
 ### 3. Executando o Servidor com Tmux (Gerenciador de Sessões)
@@ -90,4 +94,4 @@ Para manter o servidor rodando em segundo plano de forma persistente utilizando 
 
 ## 🔒 Resumo de Segurança & Boas Práticas
 - **Frontend**: O APK contém apenas assets visuais e a URL pública da API. Nenhuma chave secreta ou credencial de banco de dados fica embutida no aplicativo móvel.
-- **Backend**: O binário executável (`server`) roda isolado no Ubuntu, protegido por variáveis de ambiente (`.env`) restritas e conectado ao PostgreSQL local.
+- **Backend**: O binário executável (`server`) roda isolado no Ubuntu, protegido por variáveis de ambiente (`.env`) restritas e conectado ao PostgreSQL local, validando o acesso administrativo dos chapeadores por e-mail e senha.

@@ -9,12 +9,14 @@ import 'package:backend/src/data/repositories/agendamento_repository_impl.dart';
 import 'package:backend/src/data/repositories/google_calendar_repository_impl.dart';
 import 'package:backend/src/data/repositories/orcamento_repository_impl.dart';
 import 'package:backend/src/data/repositories/proposta_repository_impl.dart';
+import 'package:backend/src/domain/usecases/autenticar_chapeador_usecase.dart';
 import 'package:backend/src/domain/usecases/consultar_horarios_livres_usecase.dart';
 import 'package:backend/src/domain/usecases/criar_orcamento_usecase.dart';
 import 'package:backend/src/domain/usecases/emitir_proposta_usecase.dart';
 import 'package:backend/src/domain/usecases/listar_agendamentos_usecase.dart';
 import 'package:backend/src/domain/usecases/listar_orcamentos_pendentes_usecase.dart';
 import 'package:backend/src/domain/usecases/obter_orcamento_usecase.dart';
+import 'package:backend/src/presentation/controllers/auth_controller.dart';
 import 'package:backend/src/presentation/controllers/orcamento_controller.dart';
 import 'package:backend/src/presentation/controllers/proposta_controller.dart';
 import 'package:backend/src/presentation/middlewares/cors_middleware.dart';
@@ -44,7 +46,9 @@ void main(List<String> args) async {
     calendarRepository: calendarRepository,
   );
   final consultarHorariosUseCase = ConsultarHorariosLivresUseCase(calendarRepository);
+  final autenticarChapeadorUseCase = AutenticarChapeadorUseCase(dbDatasource);
 
+  final authController = AuthController(autenticarChapeadorUseCase: autenticarChapeadorUseCase);
   final orcamentoController = OrcamentoController(
     criarOrcamentoUseCase: criarOrcamentoUseCase,
     listarPendentesUseCase: listarPendentesUseCase,
@@ -58,6 +62,7 @@ void main(List<String> args) async {
   );
 
   final apiRouter = buildApiRouter(
+    authController: authController,
     orcamentoController: orcamentoController,
     propostaController: propostaController,
   );

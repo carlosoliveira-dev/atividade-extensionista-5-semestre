@@ -1,12 +1,17 @@
 import 'package:shelf_router/shelf_router.dart';
+import '../controllers/auth_controller.dart';
 import '../controllers/orcamento_controller.dart';
 import '../controllers/proposta_controller.dart';
 
 Router buildApiRouter({
+  required AuthController authController,
   required OrcamentoController orcamentoController,
   required PropostaController propostaController,
 }) {
   final router = Router();
+
+  // Rotas de Autenticação
+  router.post('/api/auth/login', authController.login);
 
   // Rotas de Orçamento
   router.post('/api/orcamentos', orcamentoController.criar);

@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Funilaria & Pintura — Orçamento Rápido',
+                        'Funilaria & Pintura — Avaliação Online',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,

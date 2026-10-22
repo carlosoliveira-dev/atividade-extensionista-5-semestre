@@ -10,7 +10,7 @@ class SobrePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sobre o Impact Car'),
+        title: const Text('Sobre a Impact Car'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -39,13 +39,13 @@ class SobrePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Gran Faculdade — Engenharia de Software / Ciência da Computação',
+                        'Gran Faculdade — Ciência da Computação',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 12),
                       const Text(
-                        'O Impact Car é uma aplicação desenvolvida para otimizar o fluxo de triagem e orçamento assíncrono para profissionais autônomos (chapeadores e oficinas de pequeno porte).',
+                        'O Impact Car é uma aplicação desenvolvida para otimizar o fluxo de triagem e orçamento assíncrono para profissionais autônomos (chapeadores e oficinas automotivas).',
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.4),
                       ),

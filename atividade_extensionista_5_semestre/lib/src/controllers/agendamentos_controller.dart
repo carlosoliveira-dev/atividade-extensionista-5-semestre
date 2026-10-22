@@ -54,18 +54,24 @@ class AgendamentosController extends ChangeNotifier {
           'Status: ${agendamento.status.toUpperCase()}\n'
           'ID Google Calendar: ${agendamento.idEventoExterno}';
 
-      final url = 'https://calendar.google.com/calendar/render'
+      // URL de template do Google Calendar.
+      // O Android utiliza "App Links" para interceptar este link e abrir DIRETAMENTE o aplicativo nativo 
+      // do Google Calendar com Título, Descrição e Horários preenchidos automaticamente!
+      final calendarUrl = 'https://calendar.google.com/calendar/render'
           '?action=TEMPLATE'
           '&text=${Uri.encodeComponent(titulo)}'
           '&dates=${startFormatted}Z/${endFormatted}Z'
           '&details=${Uri.encodeComponent(descricao)}';
 
-      final uri = Uri.parse(url);
+      final uri = Uri.parse(calendarUrl);
+
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         return true;
       } else {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
+        // Se o Google Calendar não estiver instalado ou não puder ser aberto, abrir a Google Play Store
+        final playStoreUri = Uri.parse('https://play.google.com/store/apps/details?id=com.google.android.calendar');
+        await launchUrl(playStoreUri, mode: LaunchMode.externalApplication);
         return true;
       }
     } catch (e) {

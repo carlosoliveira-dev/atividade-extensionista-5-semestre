@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import '../../data/models/agendamento_model.dart';
+import '../../data/models/orcamento_model.dart';
 import '../../data/models/proposta_model.dart';
 import '../../domain/usecases/consultar_horarios_livres_usecase.dart';
 import '../../domain/usecases/emitir_proposta_usecase.dart';
@@ -112,6 +113,36 @@ class PropostaController {
           'data': null,
           'error': e.toString(),
         }),
+        headers: {'content-type': 'application/json'},
+      );
+    }
+  }
+
+  Future<Response> obterDetalhesPorPropostaId(Request request, String id) async {
+    try {
+      final proposta = await emitirPropostaUseCase.propostaRepository.obterPorId(id);
+      if (proposta == null) {
+        return Response.notFound(
+          jsonEncode({'success': false, 'message': 'Proposta não encontrada'}),
+          headers: {'content-type': 'application/json'},
+        );
+      }
+
+      final orcamento = await emitirPropostaUseCase.orcamentoRepository.obterPorId(proposta.orcamentoId);
+
+      return Response.ok(
+        jsonEncode({
+          'success': true,
+          'data': {
+            'proposta': PropostaModel.fromEntity(proposta).toJson(),
+            'orcamento': orcamento != null ? OrcamentoModel.fromEntity(orcamento).toJson() : null,
+          },
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    } catch (e) {
+      return Response.internalServerError(
+        body: jsonEncode({'success': false, 'message': 'Erro ao buscar detalhes: $e'}),
         headers: {'content-type': 'application/json'},
       );
     }

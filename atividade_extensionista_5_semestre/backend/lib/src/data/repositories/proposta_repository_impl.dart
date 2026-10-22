@@ -18,4 +18,9 @@ class PropostaRepositoryImpl implements PropostaRepository {
   Future<Proposta?> obterPorOrcamentoId(String orcamentoId) async {
     return await datasource.buscarPropostaPorOrcamentoId(orcamentoId);
   }
+
+  @override
+  Future<Proposta?> obterPorId(String id) async {
+    return await datasource.buscarPropostaPorId(id);
+  }
 }

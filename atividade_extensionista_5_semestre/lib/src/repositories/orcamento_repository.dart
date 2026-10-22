@@ -50,6 +50,14 @@ class OrcamentoRepository {
     throw Exception(response['error'] ?? 'Falha ao emitir proposta.');
   }
 
+  Future<Map<String, dynamic>> buscarDetalhesProposta(String propostaId) async {
+    final response = await apiService.get('${ApiConstants.propostas}/detalhes/$propostaId');
+    if (response['success'] == true && response['data'] != null) {
+      return response['data'] as Map<String, dynamic>;
+    }
+    throw Exception(response['error'] ?? 'Falha ao buscar detalhes da proposta.');
+  }
+
   Future<List<DateTime>> consultarHorariosLivres(DateTime data) async {
     final url = '${ApiConstants.horariosLivres}?data=${data.toIso8601String().split('T').first}';
     final response = await apiService.get(url);

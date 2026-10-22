@@ -30,6 +30,16 @@ class AgendamentosController extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>?> buscarDetalhesProposta(String propostaId) async {
+    try {
+      return await repository.buscarDetalhesProposta(propostaId);
+    } catch (e) {
+      errorMessage = 'Erro ao buscar detalhes: $e';
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<bool> adicionarAoGoogleCalendar(AgendamentoModel agendamento) async {
     try {
       final inicio = agendamento.dataHorarioMarcados;

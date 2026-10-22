@@ -229,11 +229,13 @@ class DatabaseDatasource {
 
       if (rows.isEmpty) return null;
       final map = rows.first.toColumnMap();
+      final valRaw = map['valor_estimado'];
+      final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
 
       return PropostaModel(
         id: map['id'] as String,
         orcamentoId: map['orcamento_id'] as String,
-        valorEstimado: (map['valor_estimado'] as num).toDouble(),
+        valorEstimado: valor,
         prazoEntrega: map['prazo_entrega'] as String,
         observacoes: map['observacoes'] as String?,
         dataEnvio: map['data_envio'] as DateTime,
@@ -241,6 +243,35 @@ class DatabaseDatasource {
     } else {
       try {
         return _memoryPropostas.firstWhere((p) => p.orcamentoId == orcamentoId);
+      } catch (_) {
+        return null;
+      }
+    }
+  }
+
+  Future<PropostaModel?> buscarPropostaPorId(String propostaId) async {
+    if (_usePostgres && _connection != null) {
+      final rows = await _connection!.execute(
+        Sql.named('SELECT * FROM propostas WHERE id = @id'),
+        parameters: {'id': propostaId},
+      );
+
+      if (rows.isEmpty) return null;
+      final map = rows.first.toColumnMap();
+      final valRaw = map['valor_estimado'];
+      final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
+
+      return PropostaModel(
+        id: map['id'] as String,
+        orcamentoId: map['orcamento_id'] as String,
+        valorEstimado: valor,
+        prazoEntrega: map['prazo_entrega'] as String,
+        observacoes: map['observacoes'] as String?,
+        dataEnvio: map['data_envio'] as DateTime,
+      );
+    } else {
+      try {
+        return _memoryPropostas.firstWhere((p) => p.id == propostaId);
       } catch (_) {
         return null;
       }

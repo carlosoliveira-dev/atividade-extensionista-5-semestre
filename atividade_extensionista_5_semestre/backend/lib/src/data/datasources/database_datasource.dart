@@ -5,16 +5,11 @@ import '../models/chapeador_model.dart';
 import '../models/foto_orcamento_model.dart';
 import '../models/orcamento_model.dart';
 import '../models/proposta_model.dart';
-import '../../domain/entities/agendamento.dart';
 import '../../domain/entities/orcamento.dart';
+import '../../domain/entities/agendamento.dart';
 
 class DatabaseDatasource {
   Connection? _connection;
-  bool _usePostgres = false;
-
-  final List<OrcamentoModel> _memoryOrcamentos = [];
-  final List<PropostaModel> _memoryPropostas = [];
-  final List<AgendamentoModel> _memoryAgendamentos = [];
 
   DatabaseDatasource();
 
@@ -37,106 +32,68 @@ class DatabaseDatasource {
         ),
       );
 
-      _usePostgres = true;
       print('✅ Conectado com sucesso ao PostgreSQL (${config.dbName}@${config.host}:${config.port})');
     } catch (e) {
-      _usePostgres = false;
-      print('ℹ️ PostgreSQL não conectado ($e). Utilizando armazenamento local em memória.');
+      print('❌ FALHA CRÍTICA AO CONECTAR AO POSTGRESQL: $e');
+      rethrow;
     }
+  }
+
+  Connection get _conn {
+    if (_connection == null) {
+      throw StateError('Conexão com o PostgreSQL não foi estabelecida.');
+    }
+    return _connection!;
   }
 
   Future<OrcamentoModel> salvarOrcamento(OrcamentoModel orcamento) async {
-    if (_usePostgres && _connection != null) {
-      await _connection!.execute(
+    await _conn.execute(
+      Sql.named(
+        'INSERT INTO orcamentos (id, cliente_nome, cliente_telefone, veiculo_modelo, veiculo_placa, descricao_dano, status, data_criacao) '
+        'VALUES (@id, @nome, @tel, @modelo, @placa, @desc, @status, @data)',
+      ),
+      parameters: {
+        'id': orcamento.id,
+        'nome': orcamento.clienteNome,
+        'tel': orcamento.clienteTelefone,
+        'modelo': orcamento.veiculoModelo,
+        'placa': orcamento.veiculoPlaca,
+        'desc': orcamento.descricaoDano,
+        'status': orcamento.status.name,
+        'data': orcamento.dataCriacao,
+      },
+    );
+
+    for (final foto in orcamento.fotos) {
+      await _conn.execute(
         Sql.named(
-          'INSERT INTO orcamentos (id, cliente_nome, cliente_telefone, veiculo_modelo, veiculo_placa, descricao_dano, status, data_criacao) '
-          'VALUES (@id, @nome, @tel, @modelo, @placa, @desc, @status, @data)',
+          'INSERT INTO fotos_orcamentos (id, orcamento_id, caminho_arquivo, url_acesso, ordem_categoria) '
+          'VALUES (@id, @orcId, @caminho, @url, @ordem)',
         ),
         parameters: {
-          'id': orcamento.id,
-          'nome': orcamento.clienteNome,
-          'tel': orcamento.clienteTelefone,
-          'modelo': orcamento.veiculoModelo,
-          'placa': orcamento.veiculoPlaca,
-          'desc': orcamento.descricaoDano,
-          'status': orcamento.status.name,
-          'data': orcamento.dataCriacao,
+          'id': foto.id,
+          'orcId': orcamento.id,
+          'caminho': foto.caminhoArquivo,
+          'url': foto.urlAcesso,
+          'ordem': foto.ordemCategoria,
         },
       );
-
-      for (final foto in orcamento.fotos) {
-        await _connection!.execute(
-          Sql.named(
-            'INSERT INTO fotos_orcamentos (id, orcamento_id, caminho_arquivo, url_acesso, ordem_categoria) '
-            'VALUES (@id, @orcId, @caminho, @url, @ordem)',
-          ),
-          parameters: {
-            'id': foto.id,
-            'orcId': orcamento.id,
-            'caminho': foto.caminhoArquivo,
-            'url': foto.urlAcesso,
-            'ordem': foto.ordemCategoria,
-          },
-        );
-      }
-      return orcamento;
-    } else {
-      _memoryOrcamentos.add(orcamento);
-      return orcamento;
     }
+    return orcamento;
   }
 
   Future<List<OrcamentoModel>> buscarPendentes() async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(
-        Sql.named('SELECT * FROM orcamentos WHERE status = @status ORDER BY data_criacao DESC'),
-        parameters: {'status': 'pendente'},
-      );
+    final rows = await _conn.execute(
+      Sql.named('SELECT * FROM orcamentos WHERE status = @status ORDER BY data_criacao DESC'),
+      parameters: {'status': 'pendente'},
+    );
 
-      final List<OrcamentoModel> lista = [];
-      for (final row in rows) {
-        final map = row.toColumnMap();
-        final id = map['id'] as String;
+    final List<OrcamentoModel> lista = [];
+    for (final row in rows) {
+      final map = row.toColumnMap();
+      final id = map['id'] as String;
 
-        final fotoRows = await _connection!.execute(
-          Sql.named('SELECT * FROM fotos_orcamentos WHERE orcamento_id = @orcId'),
-          parameters: {'orcId': id},
-        );
-
-        final fotos = fotoRows
-            .map((fRow) => FotoOrcamentoModel.fromJson(fRow.toColumnMap()))
-            .toList();
-
-        final model = OrcamentoModel(
-          id: id,
-          clienteNome: map['cliente_nome'] as String,
-          clienteTelefone: map['cliente_telefone'] as String,
-          veiculoModelo: map['veiculo_modelo'] as String,
-          veiculoPlaca: map['veiculo_placa'] as String,
-          descricaoDano: map['descricao_dano'] as String? ?? '',
-          status: StatusOrcamento.pendente,
-          dataCriacao: map['data_criacao'] as DateTime,
-          fotos: fotos,
-        );
-        lista.add(model);
-      }
-      return lista;
-    } else {
-      return _memoryOrcamentos.where((o) => o.status == StatusOrcamento.pendente).toList();
-    }
-  }
-
-  Future<OrcamentoModel?> buscarOrcamentoPorId(String id) async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(
-        Sql.named('SELECT * FROM orcamentos WHERE id = @id'),
-        parameters: {'id': id},
-      );
-
-      if (rows.isEmpty) return null;
-      final map = rows.first.toColumnMap();
-
-      final fotoRows = await _connection!.execute(
+      final fotoRows = await _conn.execute(
         Sql.named('SELECT * FROM fotos_orcamentos WHERE orcamento_id = @orcId'),
         parameters: {'orcId': id},
       );
@@ -145,200 +102,166 @@ class DatabaseDatasource {
           .map((fRow) => FotoOrcamentoModel.fromJson(fRow.toColumnMap()))
           .toList();
 
-      return OrcamentoModel(
+      final model = OrcamentoModel(
         id: id,
         clienteNome: map['cliente_nome'] as String,
         clienteTelefone: map['cliente_telefone'] as String,
         veiculoModelo: map['veiculo_modelo'] as String,
         veiculoPlaca: map['veiculo_placa'] as String,
         descricaoDano: map['descricao_dano'] as String? ?? '',
-        status: StatusOrcamento.values.firstWhere(
-          (e) => e.name == (map['status'] as String),
-          orElse: () => StatusOrcamento.pendente,
-        ),
+        status: StatusOrcamento.pendente,
         dataCriacao: map['data_criacao'] as DateTime,
         fotos: fotos,
       );
-    } else {
-      try {
-        return _memoryOrcamentos.firstWhere((o) => o.id == id);
-      } catch (_) {
-        return null;
-      }
+      lista.add(model);
     }
+    return lista;
+  }
+
+  Future<OrcamentoModel?> buscarOrcamentoPorId(String id) async {
+    final rows = await _conn.execute(
+      Sql.named('SELECT * FROM orcamentos WHERE id = @id'),
+      parameters: {'id': id},
+    );
+
+    if (rows.isEmpty) return null;
+    final map = rows.first.toColumnMap();
+
+    final fotoRows = await _conn.execute(
+      Sql.named('SELECT * FROM fotos_orcamentos WHERE orcamento_id = @orcId'),
+      parameters: {'orcId': id},
+    );
+
+    final fotos = fotoRows
+        .map((fRow) => FotoOrcamentoModel.fromJson(fRow.toColumnMap()))
+        .toList();
+
+    return OrcamentoModel(
+      id: id,
+      clienteNome: map['cliente_nome'] as String,
+      clienteTelefone: map['cliente_telefone'] as String,
+      veiculoModelo: map['veiculo_modelo'] as String,
+      veiculoPlaca: map['veiculo_placa'] as String,
+      descricaoDano: map['descricao_dano'] as String? ?? '',
+      status: StatusOrcamento.values.firstWhere(
+        (e) => e.name == (map['status'] as String),
+        orElse: () => StatusOrcamento.pendente,
+      ),
+      dataCriacao: map['data_criacao'] as DateTime,
+      fotos: fotos,
+    );
   }
 
   Future<void> atualizarStatusOrcamento(String id, StatusOrcamento novoStatus) async {
-    if (_usePostgres && _connection != null) {
-      await _connection!.execute(
-        Sql.named('UPDATE orcamentos SET status = @status WHERE id = @id'),
-        parameters: {
-          'status': novoStatus.name,
-          'id': id,
-        },
-      );
-    } else {
-      final index = _memoryOrcamentos.indexWhere((o) => o.id == id);
-      if (index != -1) {
-        final antigo = _memoryOrcamentos[index];
-        _memoryOrcamentos[index] = OrcamentoModel(
-          id: antigo.id,
-          clienteNome: antigo.clienteNome,
-          clienteTelefone: antigo.clienteTelefone,
-          veiculoModelo: antigo.veiculoModelo,
-          veiculoPlaca: antigo.veiculoPlaca,
-          descricaoDano: antigo.descricaoDano,
-          status: novoStatus,
-          dataCriacao: antigo.dataCriacao,
-          fotos: antigo.fotos,
-          proposta: antigo.proposta,
-        );
-      }
-    }
+    await _conn.execute(
+      Sql.named('UPDATE orcamentos SET status = @status WHERE id = @id'),
+      parameters: {
+        'status': novoStatus.name,
+        'id': id,
+      },
+    );
   }
 
   Future<PropostaModel> salvarProposta(PropostaModel proposta) async {
-    if (_usePostgres && _connection != null) {
-      await _connection!.execute(
-        Sql.named(
-          'INSERT INTO propostas (id, orcamento_id, valor_estimado, prazo_entrega, observacoes, data_envio) '
-          'VALUES (@id, @orcId, @valor, @prazo, @obs, @data)',
-        ),
-        parameters: {
-          'id': proposta.id,
-          'orcId': proposta.orcamentoId,
-          'valor': proposta.valorEstimado,
-          'prazo': proposta.prazoEntrega,
-          'obs': proposta.observacoes,
-          'data': proposta.dataEnvio,
-        },
-      );
-      return proposta;
-    } else {
-      _memoryPropostas.add(proposta);
-      return proposta;
-    }
+    await _conn.execute(
+      Sql.named(
+        'INSERT INTO propostas (id, orcamento_id, valor_estimado, prazo_entrega, observacoes, data_envio) '
+        'VALUES (@id, @orcId, @valor, @prazo, @obs, @data)',
+      ),
+      parameters: {
+        'id': proposta.id,
+        'orcId': proposta.orcamentoId,
+        'valor': proposta.valorEstimado,
+        'prazo': proposta.prazoEntrega,
+        'obs': proposta.observacoes,
+        'data': proposta.dataEnvio,
+      },
+    );
+    return proposta;
   }
 
   Future<PropostaModel?> buscarPropostaPorOrcamentoId(String orcamentoId) async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(
-        Sql.named('SELECT * FROM propostas WHERE orcamento_id = @orcId'),
-        parameters: {'orcId': orcamentoId},
-      );
+    final rows = await _conn.execute(
+      Sql.named('SELECT * FROM propostas WHERE orcamento_id = @orcId'),
+      parameters: {'orcId': orcamentoId},
+    );
 
-      if (rows.isEmpty) return null;
-      final map = rows.first.toColumnMap();
-      final valRaw = map['valor_estimado'];
-      final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
+    if (rows.isEmpty) return null;
+    final map = rows.first.toColumnMap();
+    final valRaw = map['valor_estimado'];
+    final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
 
-      return PropostaModel(
-        id: map['id'] as String,
-        orcamentoId: map['orcamento_id'] as String,
-        valorEstimado: valor,
-        prazoEntrega: map['prazo_entrega'] as String,
-        observacoes: map['observacoes'] as String?,
-        dataEnvio: map['data_envio'] as DateTime,
-      );
-    } else {
-      try {
-        return _memoryPropostas.firstWhere((p) => p.orcamentoId == orcamentoId);
-      } catch (_) {
-        return null;
-      }
-    }
+    return PropostaModel(
+      id: map['id'] as String,
+      orcamentoId: map['orcamento_id'] as String,
+      valorEstimado: valor,
+      prazoEntrega: map['prazo_entrega'] as String,
+      observacoes: map['observacoes'] as String?,
+      dataEnvio: map['data_envio'] as DateTime,
+    );
   }
 
   Future<PropostaModel?> buscarPropostaPorId(String propostaId) async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(
-        Sql.named('SELECT * FROM propostas WHERE id = @id'),
-        parameters: {'id': propostaId},
-      );
+    final rows = await _conn.execute(
+      Sql.named('SELECT * FROM propostas WHERE id = @id'),
+      parameters: {'id': propostaId},
+    );
 
-      if (rows.isEmpty) return null;
-      final map = rows.first.toColumnMap();
-      final valRaw = map['valor_estimado'];
-      final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
+    if (rows.isEmpty) return null;
+    final map = rows.first.toColumnMap();
+    final valRaw = map['valor_estimado'];
+    final double valor = valRaw is num ? valRaw.toDouble() : double.tryParse(valRaw.toString()) ?? 0.0;
 
-      return PropostaModel(
-        id: map['id'] as String,
-        orcamentoId: map['orcamento_id'] as String,
-        valorEstimado: valor,
-        prazoEntrega: map['prazo_entrega'] as String,
-        observacoes: map['observacoes'] as String?,
-        dataEnvio: map['data_envio'] as DateTime,
-      );
-    } else {
-      try {
-        return _memoryPropostas.firstWhere((p) => p.id == propostaId);
-      } catch (_) {
-        return null;
-      }
-    }
+    return PropostaModel(
+      id: map['id'] as String,
+      orcamentoId: map['orcamento_id'] as String,
+      valorEstimado: valor,
+      prazoEntrega: map['prazo_entrega'] as String,
+      observacoes: map['observacoes'] as String?,
+      dataEnvio: map['data_envio'] as DateTime,
+    );
   }
 
   Future<AgendamentoModel> salvarAgendamento(AgendamentoModel agendamento) async {
-    if (_usePostgres && _connection != null) {
-      await _connection!.execute(
-        Sql.named(
-          'INSERT INTO agendamentos (id, proposta_id, id_evento_externo, data_horario_marcados, status) '
-          'VALUES (@id, @propId, @extId, @data, @status)',
-        ),
-        parameters: {
-          'id': agendamento.id,
-          'propId': agendamento.propostaId,
-          'extId': agendamento.idEventoExterno,
-          'data': agendamento.dataHorarioMarcados,
-          'status': agendamento.status.name,
-        },
-      );
-      return agendamento;
-    } else {
-      _memoryAgendamentos.add(agendamento);
-      return agendamento;
-    }
+    await _conn.execute(
+      Sql.named(
+        'INSERT INTO agendamentos (id, proposta_id, id_evento_externo, data_horario_marcados, status) '
+        'VALUES (@id, @propId, @extId, @data, @status)',
+      ),
+      parameters: {
+        'id': agendamento.id,
+        'propId': agendamento.propostaId,
+        'extId': agendamento.idEventoExterno,
+        'data': agendamento.dataHorarioMarcados,
+        'status': agendamento.status.name,
+      },
+    );
+    return agendamento;
   }
 
   Future<List<AgendamentoModel>> buscarAgendamentos() async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(Sql.named('SELECT * FROM agendamentos'));
-      return rows.map((r) {
-        final map = r.toColumnMap();
-        return AgendamentoModel(
-          id: map['id'] as String,
-          propostaId: map['proposta_id'] as String,
-          idEventoExterno: map['id_evento_externo'] as String,
-          dataHorarioMarcados: map['data_horario_marcados'] as DateTime,
-          status: StatusAgendamento.values.firstWhere(
-            (e) => e.name == (map['status'] as String),
-            orElse: () => StatusAgendamento.confirmado,
-          ),
-        );
-      }).toList();
-    } else {
-      return List.unmodifiable(_memoryAgendamentos);
-    }
+    final rows = await _conn.execute(Sql.named('SELECT * FROM agendamentos'));
+    return rows.map((r) {
+      final map = r.toColumnMap();
+      return AgendamentoModel(
+        id: map['id'] as String,
+        propostaId: map['proposta_id'] as String,
+        idEventoExterno: map['id_evento_externo'] as String,
+        dataHorarioMarcados: map['data_horario_marcados'] as DateTime,
+        status: StatusAgendamento.values.firstWhere(
+          (e) => e.name == (map['status'] as String),
+          orElse: () => StatusAgendamento.confirmado,
+        ),
+      );
+    }).toList();
   }
 
   Future<ChapeadorModel?> buscarChapeadorPorEmail(String email) async {
-    if (_usePostgres && _connection != null) {
-      final rows = await _connection!.execute(
-        Sql.named('SELECT * FROM chapeadores WHERE email = @email'),
-        parameters: {'email': email},
-      );
-      if (rows.isEmpty) return null;
-      return ChapeadorModel.fromMap(rows.first.toColumnMap());
-    } else {
-      if (email == 'chapeador@impactcar.com') {
-        return const ChapeadorModel(
-          id: 'chapeador_default_1',
-          nome: 'Chapeador Principal',
-          email: 'chapeador@impactcar.com',
-          senha: '123456',
-        );
-      }
-      return null;
-    }
+    final rows = await _conn.execute(
+      Sql.named('SELECT * FROM chapeadores WHERE email = @email'),
+      parameters: {'email': email},
+    );
+    if (rows.isEmpty) return null;
+    return ChapeadorModel.fromMap(rows.first.toColumnMap());
   }
 }

@@ -49,15 +49,39 @@ class _NovoOrcamentoPageState extends State<NovoOrcamentoPage> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: Colors.red.shade400),
                       ),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Icon(Icons.error_outline, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              _controller.errorMessage!,
-                              style: const TextStyle(color: Colors.red, fontSize: 13),
+                          Row(
+                            children: [
+                              const Icon(Icons.error_outline, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _controller.errorMessage!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 13),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: const BorderSide(color: Colors.red),
                             ),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Tentar Novamente'),
+                            onPressed: () async {
+                              final ok = await _controller.enviarSolicitacao();
+                              if (ok && context.mounted) {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/sucesso',
+                                  arguments: _controller.orcamentoCriado,
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),

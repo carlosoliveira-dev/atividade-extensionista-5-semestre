@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/admin_dashboard_controller.dart';
 import '../widgets/emitir_proposta_dialog.dart';
+import '../widgets/fullscreen_photo_viewer.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -18,6 +21,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   void initState() {
     super.initState();
     _controller.carregarPendentes();
+  }
+
+  Uint8List? _decodeBase64Image(String str) {
+    if (str.isEmpty || str.startsWith('http')) return null;
+    if (str.startsWith('/data/') || str.startsWith('/storage/') || str.contains(':\\')) {
+      return null;
+    }
+    try {
+      String clean = str.trim();
+      if (clean.contains(',')) {
+        clean = clean.split(',').last;
+      }
+      return base64Decode(clean);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -119,7 +138,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         ),
                         const SizedBox(height: 12),
                         const Text(
-                          'Fotos Enviadas:',
+                          'Fotos Enviadas (Toque para ampliar e dar zoom):',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         const SizedBox(height: 8),
@@ -130,23 +149,47 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             itemCount: item.fotos.length,
                             itemBuilder: (context, fIndex) {
                               final foto = item.fotos[fIndex];
-                              final isLocalFile = File(foto.caminhoArquivo).existsSync();
+                              Widget imageChild;
+                              
+                              final rawData = foto.urlAcesso.isNotEmpty 
+                                  ? foto.urlAcesso 
+                                  : foto.caminhoArquivo;
+                              final decodedBytes = _decodeBase64Image(rawData);
 
-                              return Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                width: 90,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: isLocalFile
-                                      ? Image.file(
-                                          File(foto.caminhoArquivo),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : const Icon(Icons.image_not_supported),
+                              if (decodedBytes != null) {
+                                imageChild = Image.memory(decodedBytes, fit: BoxFit.cover);
+                              } else if (rawData.startsWith('http')) {
+                                imageChild = Image.network(rawData, fit: BoxFit.cover);
+                              } else if (File(rawData).existsSync()) {
+                                imageChild = Image.file(File(rawData), fit: BoxFit.cover);
+                              } else {
+                                imageChild = const Center(child: Icon(Icons.image_not_supported, color: Colors.grey));
+                              }
+
+                              return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => FullscreenPhotoViewer(
+                                        photoData: rawData,
+                                        category: '${foto.ordemCategoria} (${fIndex + 1}/${item.fotos.length})',
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: imageChild,
+                                  ),
                                 ),
                               );
                             },

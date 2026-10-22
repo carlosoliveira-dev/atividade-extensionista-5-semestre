@@ -62,15 +62,15 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
     final proposta = detalhes['proposta'] as Map<String, dynamic>?;
     final orcamento = detalhes['orcamento'] as Map<String, dynamic>?;
 
-    final valor = proposta?['valorEstimado'] ?? 0.0;
-    final prazo = proposta?['prazoEntrega'] ?? '-';
+    final valor = proposta?['valorEstimado'] ?? proposta?['valor_estimado'] ?? 0.0;
+    final prazo = proposta?['prazoEntrega'] ?? proposta?['prazo_entrega'] ?? '-';
     final obs = proposta?['observacoes'] ?? 'Nenhuma observação.';
     
-    final clienteNome = orcamento?['clienteNome'] ?? '-';
-    final clienteTel = orcamento?['clienteTelefone'] ?? '-';
-    final veiculo = orcamento?['veiculoModelo'] ?? '-';
-    final placa = orcamento?['veiculoPlaca'] ?? '-';
-    final relato = orcamento?['descricaoDano'] ?? '-';
+    final clienteNome = orcamento?['clienteNome'] ?? orcamento?['cliente_nome'] ?? '-';
+    final clienteTel = orcamento?['clienteTelefone'] ?? orcamento?['cliente_telefone'] ?? '-';
+    final veiculo = orcamento?['veiculoModelo'] ?? orcamento?['veiculo_modelo'] ?? '-';
+    final placa = orcamento?['veiculoPlaca'] ?? orcamento?['veiculo_placa'] ?? '-';
+    final relato = orcamento?['descricaoDano'] ?? orcamento?['descricao_dano'] ?? '-';
     final fotos = (orcamento?['fotos'] as List<dynamic>?) ?? [];
 
     showDialog(
@@ -89,7 +89,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                 Text('Telefone/WhatsApp: $clienteTel'),
                 const Divider(height: 24),
                 const Text('💰 Proposta Comercial', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('Valor Estimado: R\$ ${valor.toStringAsFixed(2)}'),
+                Text('Valor Estimado: R\$ ${(valor is num ? valor.toDouble() : double.tryParse(valor.toString()) ?? 0.0).toStringAsFixed(2)}'),
                 Text('Prazo de Entrega: $prazo'),
                 Text('Observações: $obs'),
                 const Divider(height: 24),
@@ -103,29 +103,37 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                 else
                   SizedBox(
                     height: 90,
+                    width: double.infinity,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: fotos.length,
                       itemBuilder: (context, fIdx) {
                         final foto = fotos[fIdx] as Map<String, dynamic>;
-                        final urlAcesso = foto['urlAcesso'] as String? ?? foto['caminhoArquivo'] as String? ?? '';
-                        final categoria = foto['ordemCategoria'] as String? ?? 'Foto';
+                        final rawData = (foto['urlAcesso'] as String? ?? foto['url_access'] as String? ?? '').isNotEmpty
+                            ? (foto['urlAcesso'] as String? ?? foto['url_access'] as String? ?? '')
+                            : (foto['caminhoArquivo'] as String? ?? foto['caminho_arquivo'] as String? ?? '');
+                        final categoria = foto['ordemCategoria'] as String? ?? foto['ordem_categoria'] as String? ?? 'Foto';
 
                         Widget imageChild;
-                        final decodedBytes = _decodeBase64Image(urlAcesso);
+                        final decodedBytes = _decodeBase64Image(rawData);
                         if (decodedBytes != null) {
                           imageChild = Image.memory(decodedBytes, fit: BoxFit.cover);
+                        } else if (rawData.startsWith('http')) {
+                          imageChild = Image.network(rawData, fit: BoxFit.cover);
+                        } else if (File(rawData).existsSync()) {
+                          imageChild = Image.file(File(rawData), fit: BoxFit.cover);
                         } else {
-                          imageChild = const Icon(Icons.image_not_supported);
+                          imageChild = const Center(child: Icon(Icons.image_not_supported, color: Colors.grey));
                         }
 
                         return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => FullscreenPhotoViewer(
-                                  photoData: urlAcesso,
+                                  photoData: rawData,
                                   category: '$categoria (${fIdx + 1}/${fotos.length})',
                                 ),
                               ),

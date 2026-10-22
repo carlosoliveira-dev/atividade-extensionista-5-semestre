@@ -73,24 +73,29 @@ class _ChapeadorHubPageState extends State<ChapeadorHubPage> {
           ),
         ],
       ),
-      floatingActionButton: AnimatedSlide(
-        duration: const Duration(milliseconds: 200),
-        offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
-        child: AnimatedOpacity(
+      floatingActionButton: SafeArea(
+        child: AnimatedSlide(
           duration: const Duration(milliseconds: 200),
-          opacity: _isFabVisible ? 1.0 : 0.0,
-          child: FloatingActionButton.extended(
-            onPressed: _isFabVisible ? () => AppTheme.abrirMenuAcessibilidade(context) : null,
-            icon: const Icon(Icons.accessibility_new_rounded),
-            label: const Text('Acessibilidade'),
-            tooltip: 'Abrir painel de acessibilidade e temas',
+          offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: _isFabVisible ? 1.0 : 0.0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, right: 4.0),
+              child: FloatingActionButton.extended(
+                onPressed: _isFabVisible ? () => AppTheme.abrirMenuAcessibilidade(context) : null,
+                icon: const Icon(Icons.accessibility_new_rounded),
+                label: const Text('Acessibilidade'),
+                tooltip: 'Abrir painel de acessibilidade e temas',
+              ),
+            ),
           ),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 96.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

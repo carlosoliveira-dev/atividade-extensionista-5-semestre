@@ -14,7 +14,7 @@ class AppTheme {
       context: context,
       showDragHandle: true,
       builder: (context) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -72,27 +72,41 @@ class AppTheme {
                     Text('$percent%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        FilledButton.tonalIcon(
-                          icon: const Icon(Icons.remove),
-                          label: const Text('Menor'),
-                          onPressed: scale > 0.8
-                              ? () => textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
-                              : null,
+                        Expanded(
+                          child: FilledButton.tonalIcon(
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                            ),
+                            icon: const Icon(Icons.remove, size: 16),
+                            label: const Text('Menor', style: TextStyle(fontSize: 12)),
+                            onPressed: scale > 0.8
+                                ? () => textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
+                                : null,
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        OutlinedButton(
-                          onPressed: () => textScaleFactorNotifier.value = 1.0,
-                          child: const Text('Padrão'),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                            ),
+                            onPressed: () => textScaleFactorNotifier.value = 1.0,
+                            child: const Text('Padrão', style: TextStyle(fontSize: 12)),
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        FilledButton.tonalIcon(
-                          icon: const Icon(Icons.add),
-                          label: const Text('Maior'),
-                          onPressed: scale < 1.6
-                              ? () => textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
-                              : null,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: FilledButton.tonalIcon(
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                            ),
+                            icon: const Icon(Icons.add, size: 16),
+                            label: const Text('Maior', style: TextStyle(fontSize: 12)),
+                            onPressed: scale < 1.6
+                                ? () => textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
+                                : null,
+                          ),
                         ),
                       ],
                     ),

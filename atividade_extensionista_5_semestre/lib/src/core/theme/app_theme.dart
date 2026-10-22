@@ -10,111 +10,114 @@ class AppTheme {
   static const Color backgroundColor = Color(0xFFF8FDFF);
 
   static void abrirMenuAcessibilidade(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.accessibility_new_outlined, size: 28),
-                SizedBox(width: 12),
-                Text(
-                  'Painel de Acessibilidade',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text('Aparência / Tema', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            const SizedBox(height: 8),
-            ValueListenableBuilder<ThemeMode>(
-              valueListenable: themeModeNotifier,
-              builder: (context, themeMode, _) {
-                return SegmentedButton<ThemeMode>(
-                  segments: const [
-                    ButtonSegment(
-                      value: ThemeMode.light,
-                      label: Text('Claro'),
-                      icon: Icon(Icons.light_mode_outlined),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.dark,
-                      label: Text('Escuro'),
-                      icon: Icon(Icons.dark_mode_outlined),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.system,
-                      label: Text('Sistema'),
-                      icon: Icon(Icons.brightness_auto_outlined),
-                    ),
-                  ],
-                  selected: {themeMode},
-                  onSelectionChanged: (newSelection) {
-                    themeModeNotifier.value = newSelection.first;
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-            const Text('Tamanho da Fonte', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            const SizedBox(height: 8),
-            ValueListenableBuilder<double>(
-              valueListenable: textScaleFactorNotifier,
-              builder: (context, scale, _) {
-                final percent = (scale * 100).round();
-                return Column(
-                  children: [
-                    Text('$percent%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FilledButton.tonalIcon(
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 8, 24, bottomInset),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.accessibility_new_outlined, size: 28),
+                  SizedBox(width: 12),
+                  Text(
+                    'Painel de Acessibilidade',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Text('Aparência / Tema', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 8),
+              ValueListenableBuilder<ThemeMode>(
+                valueListenable: themeModeNotifier,
+                builder: (context, themeMode, _) {
+                  return SegmentedButton<ThemeMode>(
+                    segments: const [
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        label: Text('Claro'),
+                        icon: Icon(Icons.light_mode_outlined),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        label: Text('Escuro'),
+                        icon: Icon(Icons.dark_mode_outlined),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        label: Text('Sistema'),
+                        icon: Icon(Icons.brightness_auto_outlined),
+                      ),
+                    ],
+                    selected: {themeMode},
+                    onSelectionChanged: (newSelection) {
+                      themeModeNotifier.value = newSelection.first;
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              const Text('Tamanho da Fonte', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 8),
+              ValueListenableBuilder<double>(
+                valueListenable: textScaleFactorNotifier,
+                builder: (context, scale, _) {
+                  final percent = (scale * 100).round();
+                  return Column(
+                    children: [
+                      Text('$percent%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.tonalIcon(
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                              ),
+                              icon: const Icon(Icons.remove, size: 16),
+                              label: const Text('Menor', style: TextStyle(fontSize: 12)),
+                              onPressed: scale > 0.8
+                                  ? () => textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
+                                  : null,
                             ),
-                            icon: const Icon(Icons.remove, size: 16),
-                            label: const Text('Menor', style: TextStyle(fontSize: 12)),
-                            onPressed: scale > 0.8
-                                ? () => textScaleFactorNotifier.value = (scale - 0.15).clamp(0.8, 1.6)
-                                : null,
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                              ),
+                              onPressed: () => textScaleFactorNotifier.value = 1.0,
+                              child: const Text('Padrão', style: TextStyle(fontSize: 12)),
                             ),
-                            onPressed: () => textScaleFactorNotifier.value = 1.0,
-                            child: const Text('Padrão', style: TextStyle(fontSize: 12)),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: FilledButton.tonalIcon(
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: FilledButton.tonalIcon(
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                              ),
+                              icon: const Icon(Icons.add, size: 16),
+                              label: const Text('Maior', style: TextStyle(fontSize: 12)),
+                              onPressed: scale < 1.6
+                                  ? () => textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
+                                  : null,
                             ),
-                            icon: const Icon(Icons.add, size: 16),
-                            label: const Text('Maior', style: TextStyle(fontSize: 12)),
-                            onPressed: scale < 1.6
-                                ? () => textScaleFactorNotifier.value = (scale + 0.15).clamp(0.8, 1.6)
-                                : null,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

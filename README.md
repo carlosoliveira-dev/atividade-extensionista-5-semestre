@@ -1,7 +1,7 @@
-# 🚗 Impact Car — Triagem & Orçamento Assíncrono
+# 🚗 Impact Car — Triagem & Avaliação Online
 
 > **Atividade Extensionista do 5º Semestre — Gran Faculdade**  
-> *Engenharia de Software / Ciência da Computação*
+> *Ciência da Computação*
 
 <p align="center">
   <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
@@ -15,9 +15,9 @@
 
 ## 📖 Sobre o Projeto
 
-O **Impact Car** é uma solução *Full-Stack* desenvolvida inteiramente em **Dart** (Front-end em **Flutter** e Back-end em **Dart puro**) projetada para otimizar o fluxo de triagem e orçamento de funilaria e pintura para profissionais autônomos (chapeadores e oficinas de pequeno porte).
+O **Impact Car** é uma aplicação *Full-Stack* desenvolvida inteiramente em **Dart** (Front-end em **Flutter** e Back-end em **Dart puro**) projetada para otimizar o fluxo de triagem e **Avaliação Online** de funilaria e pintura para profissionais autônomos (chapeadores e oficinas de pequeno porte).
 
-O sistema elimina interrupções presenciais desnecessárias no expediente do profissional, permitindo que o cliente envie fotos e descrições do dano veicular de forma assíncrona, enquanto o chapeador processa os orçamentos em lote no final do dia.
+O sistema elimina interrupções presenciais desnecessárias no expediente do profissional, permitindo que o cliente envie fotos e descrições do dano veicular de forma flexível, enquanto o chapeador processa as avaliações em lote no final do dia.
 
 ---
 
@@ -26,7 +26,7 @@ O sistema elimina interrupções presenciais desnecessárias no expediente do pr
 Este projeto apoia diretamente os Objetivos de Desenvolvimento Sustentável da ONU:
 
 - 🟢 **ODS 8 — Trabalho Decente e Crescimento Econômico**: Elimina interrupções no expediente do profissional autônomo, permitindo foco e organização no trabalho.
-- ♻️ **ODS 13 — Ação Contra a Mudança Global do Clima**: Reduz a emissão de CO2 ao evitar deslocamentos desnecessários para orçamentos presenciais.
+- ♻️ **ODS 13 — Ação Contra a Mudança Global do Clima**: Reduz significativamente a emissão de CO2 ao evitar deslocamentos desnecessários para orçamentos presenciais.
 
 ---
 
@@ -61,7 +61,7 @@ atividade_extensionista_5_semestre/
 
 ### 💻 Para o Profissional (Chapeador)
 - **Painel Administrativo Protegido**: Login seguro por e-mail e senha (`chapeador@impactcar.com` / `123456`).
-- **Fila de Orçamentos Pendentes**: Visualização organizada em lote das solicitações enviadas pelos clientes, com miniaturas das fotos.
+- **Fila de Avaliações Pendentes**: Visualização organizada em lote das solicitações enviadas pelos clientes, com miniaturas das fotos.
 - **Emissão de Propostas & Agendamento**: Definição de valores e prazos, com sincronização automática na agenda de serviços.
 
 ---
@@ -87,7 +87,7 @@ dart run bin/server.dart
 ```
 *O servidor estará rodando em `http://localhost:8080` (e acessível via emulador Android em `http://10.0.2.2:8080`).*
 
-### 3. Executar o Front-end (Flutter App)
+### 3. Executando o Front-end (Flutter App)
 Em outro terminal, na raiz do projeto:
 ```bash
 flutter pub get
@@ -98,7 +98,7 @@ flutter run
 
 ## 📦 Guia de Deploy
 
-Consulte o arquivo [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md) para instruções detalhadas sobre:
+Consulte o arquivo [DEPLOY_GUIDE.md](atividade_extensionista_5_semestre/DEPLOY_GUIDE.md) para instruções detalhadas sobre:
 - **Geração do APK** (`flutter build apk --release`) e **App Bundle** (`.aab`) para a Google Play Store.
 - **Compilação do Backend em Binário Nativo** para servidores Ubuntu (`dart compile exe`) rodando em segundo plano com `tmux`.
 

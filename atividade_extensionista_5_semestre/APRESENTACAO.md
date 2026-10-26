@@ -8,7 +8,7 @@
 O **Impact Car** é uma aplicação *Full-Stack* desenvolvida inteiramente na linguagem **Dart** (Front-end em **Flutter** e Back-end em **Dart Puro**). 
 
 ### O que significa "Avaliação Online"?
-Diferente dos orçamentos tradicionais (que exigem que o motorista pare seu dia, vá até a oficina e espere o chapeador avaliar o carro em tempo real), o modelo de **Avaliação Online** desconecta o envio da resposta:
+Diferente dos orçamentos tradicionais (que exigem que o motorista pare seu dia, vá até a oficina e espere o chapeador avaliar o carro em tempo real), o modelo de **Avaliação Online** opera sem exigir que cliente e profissional estejam conectados ao mesmo tempo:
 - O **cliente** envia as fotos e os dados do dano no momento que for mais conveniente para ele, sem filas ou agendamentos presenciais.
 - O **chapeador** analisa as evidências visuais e calcula o orçamento em lote quando seu expediente estiver calmo (ex: ao final do dia), respondendo de forma organizada e sem interrupções indesejadas.
 

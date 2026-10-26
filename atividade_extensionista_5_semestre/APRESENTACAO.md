@@ -16,6 +16,7 @@ Diferente dos orçamentos tradicionais (que exigem que o motorista pare seu dia,
 
 ## 🎯 2. Alinhamento com os ODS (ONU)
 - **ODS 8 (Trabalho Decente e Crescimento Econômico)**: Protege o tempo e o foco do profissional autônomo, eliminando interrupções presenciais.
+- **ODS 12 (Consumo e Produção Sustentáveis — Meta 12.5)**: Promoção do "Selo de Oficina Verde" com gestão e descarte consciente de resíduos químicos da funilaria (tintas, solventes e lixas) e incentivo ao reuso e recuperação de peças metálicas em vez de descarte.
 - **ODS 13 (Ação Contra a Mudança Global do Clima)**: Evita deslocamentos desnecessários de veículos para simples orçamentos, reduzindo a emissão de CO2.
 
 ---

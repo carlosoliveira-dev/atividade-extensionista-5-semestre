@@ -26,7 +26,8 @@ O sistema elimina interrupções presenciais desnecessárias no expediente do pr
 Este projeto apoia diretamente os Objetivos de Desenvolvimento Sustentável da ONU:
 
 - 🟢 **ODS 8 — Trabalho Decente e Crescimento Econômico**: Elimina interrupções no expediente do profissional autônomo, permitindo foco e organização no trabalho.
-- ♻️ **ODS 13 — Ação Contra a Mudança Global do Clima**: Reduz significativamente a emissão de CO2 ao evitar deslocamentos desnecessários para orçamentos presenciais.
+- ♻️ **ODS 12 — Consumo e Produção Sustentáveis (Meta 12.5)**: Promoção do "Selo de Oficina Verde" com gestão e descarte consciente de resíduos químicos da funilaria (tintas, solventes e lixas) e incentivo à recuperação e reuso de peças.
+- 🌍 **ODS 13 — Ação Contra a Mudança Global do Clima**: Reduz significativamente a emissão de CO2 ao evitar deslocamentos desnecessários para orçamentos presenciais.
 
 ---
 
@@ -70,7 +71,7 @@ atividade_extensionista_5_semestre/
 
 ### Pré-requisitos
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) instalado (^3.13.0+)
-- [Dart SDK](https://dart.dev/) instalado
+- [Dart SDK](https://dart.dev/) installed
 - [PostgreSQL](https://www.postgresql.org/) (Opcional: o backend possui fallback automático para armazenamento em memória caso o banco não esteja ativo).
 
 ### 1. Clonar o Repositório

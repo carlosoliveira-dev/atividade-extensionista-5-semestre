@@ -230,6 +230,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 10),
                       OdsBadge(
+                        title: 'ODS 12 - Produção Sustentável',
+                        description: 'Gestão de resíduos e reuso de peças na oficina',
+                        icon: Icons.recycling_outlined,
+                        color: Color(0xFFC5192D),
+                      ),
+                      SizedBox(height: 10),
+                      OdsBadge(
                         title: 'ODS 13 - Ação Climática',
                         description: 'Evita emissão de CO2 em deslocamentos',
                         icon: Icons.eco_outlined,

@@ -67,6 +67,13 @@ class SobrePage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const OdsBadge(
+                title: 'ODS 12 - Consumo e Produção Sustentáveis (Meta 12.5)',
+                description: 'Promoção do "Selo de Oficina Verde" com gestão e descarte consciente de resíduos químicos da funilaria e incentivo à recuperação e reuso de peças.',
+                icon: Icons.recycling_outlined,
+                color: Color(0xFFC5192D),
+              ),
+              const SizedBox(height: 12),
+              const OdsBadge(
                 title: 'ODS 13 - Ação Contra a Mudança Global do Clima',
                 description: 'Reduz significativamente a emissão de CO2 ao evitar deslocamentos desnecessários para orçamentos presenciais.',
                 icon: Icons.eco_outlined,

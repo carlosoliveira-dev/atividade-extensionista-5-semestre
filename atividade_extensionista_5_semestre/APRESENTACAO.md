@@ -4,7 +4,7 @@
 
 ---
 
-## 📋 1. Resumo Executivo e O Conceito de Avaliação Online
+## 📋 1. Visão Geral do Projeto e O Modelo de Avaliação Online
 O **Impact Car** é uma aplicação *Full-Stack* desenvolvida inteiramente na linguagem **Dart** (Front-end em **Flutter** e Back-end em **Dart Puro**). 
 
 ### O que significa "Avaliação Online"?

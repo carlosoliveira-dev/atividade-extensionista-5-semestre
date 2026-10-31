@@ -113,6 +113,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                         final rawData = (foto['urlAcesso'] as String? ?? foto['url_access'] as String? ?? '').isNotEmpty
                             ? (foto['urlAcesso'] as String? ?? foto['url_access'] as String? ?? '')
                             : (foto['caminhoArquivo'] as String? ?? foto['caminho_arquivo'] as String? ?? '');
+                        print('📸 [AGENDAMENTOS DEBUG] Foto index $fIdx | rawData.length: ${rawData.length}');
                         final categoria = foto['ordemCategoria'] as String? ?? foto['ordem_categoria'] as String? ?? 'Foto';
 
                         Widget imageChild;

@@ -155,6 +155,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                               final rawData = foto.urlAcesso.isNotEmpty 
                                   ? foto.urlAcesso 
                                   : foto.caminhoArquivo;
+                              print('📸 [ADMIN DEBUG] Orcamento ${item.id} | Foto $fIndex | rawData.length: ${rawData.length}');
                               final decodedBytes = _decodeBase64Image(rawData);
 
                               if (decodedBytes != null) {

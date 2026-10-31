@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,27 +25,24 @@ class NovoOrcamentoController extends ChangeNotifier {
   String? errorMessage;
   OrcamentoModel? orcamentoCriado;
 
-  final ImagePicker _picker = ImagePicker();
-
   final List<String> categoriasGuiadas = [
-    'Visão Geral Frontal/Traseira',
-    'Ângulo Lateral Esquerdo/Direito',
-    'Foco Próximo no Amassado/Dano',
-    'Foto Detalhada do Farol/Parachoque',
-    'Outro Ângulo Relevante',
+    'Frente / Parachoque Dianteiro',
+    'Lateral Esquerda / Portas',
+    'Lateral Direita / Portas',
+    'Traseira / Parachoque',
+    'Teto / Capô / Detalhe',
   ];
 
   Future<void> selecionarFoto(int index, ImageSource source) async {
     try {
-      final XFile? xFile = await _picker.pickImage(
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
         source: source,
-        imageQuality: 90,
+        imageQuality: 85,
       );
 
-      if (xFile != null) {
-        final fileOriginal = File(xFile.path);
-
-        // RF02 - Compressão de Imagens no Cliente antes de salvar/enviar
+      if (pickedFile != null) {
+        final fileOriginal = File(pickedFile.path);
         final fileComprimido = await ImageCompressor.compressImage(fileOriginal);
 
         final cat = index < categoriasGuiadas.length
@@ -70,6 +68,29 @@ class NovoOrcamentoController extends ChangeNotifier {
     if (index >= 0 && index < fotosSelecionadas.length) {
       fotosSelecionadas.removeAt(index);
       fotosCategorias.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  Future<void> adicionarFotoDeCaminho(int index, String path) async {
+    try {
+      final fileOriginal = File(path);
+      final fileComprimido = await ImageCompressor.compressImage(fileOriginal);
+
+      final cat = index < categoriasGuiadas.length
+          ? categoriasGuiadas[index]
+          : 'Ângulo Extra ${index + 1}';
+
+      if (index < fotosSelecionadas.length) {
+        fotosSelecionadas[index] = fileComprimido;
+        fotosCategorias[index] = cat;
+      } else {
+        fotosSelecionadas.add(fileComprimido);
+        fotosCategorias.add(cat);
+      }
+      notifyListeners();
+    } catch (e) {
+      errorMessage = 'Erro ao processar foto da câmera: $e';
       notifyListeners();
     }
   }
@@ -106,9 +127,11 @@ class NovoOrcamentoController extends ChangeNotifier {
     try {
       final List<Map<String, String>> fotosPayload = [];
       for (int i = 0; i < fotosSelecionadas.length; i++) {
+        final bytes = await fotosSelecionadas[i].readAsBytes();
+        final base64String = base64Encode(bytes);
         fotosPayload.add({
-          'caminhoArquivo': fotosSelecionadas[i].path,
-          'urlAcesso': fotosSelecionadas[i].path,
+          'caminhoArquivo': base64String,
+          'urlAcesso': base64String,
           'ordemCategoria': fotosCategorias[i],
         });
       }

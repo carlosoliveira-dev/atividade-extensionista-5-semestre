@@ -34,7 +34,8 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
         clean = clean.split(',').last;
       }
       return base64Decode(clean);
-    } catch (_) {
+    } catch (e) {
+      print('❌ [AGENDAMENTOS] Erro ao decodificar Base64 da foto (tamanho: ${str.length}): $e');
       return null;
     }
   }

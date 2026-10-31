@@ -65,6 +65,7 @@ class DatabaseDatasource {
     );
 
     for (final foto in orcamento.fotos) {
+      print('💾 [BACKEND] Salvando foto ID: ${foto.id} | Tamanho Base64: ${foto.caminhoArquivo.length} chars');
       await _conn.execute(
         Sql.named(
           'INSERT INTO fotos_orcamentos (id, orcamento_id, caminho_arquivo, url_acesso, ordem_categoria) '

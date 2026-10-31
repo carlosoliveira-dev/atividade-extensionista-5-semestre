@@ -34,7 +34,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         clean = clean.split(',').last;
       }
       return base64Decode(clean);
-    } catch (_) {
+    } catch (e) {
+      print('❌ [ADMIN] Erro ao decodificar Base64 da foto (tamanho: ${str.length}): $e');
       return null;
     }
   }

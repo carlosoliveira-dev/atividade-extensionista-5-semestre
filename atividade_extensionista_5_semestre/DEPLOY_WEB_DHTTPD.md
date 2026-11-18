@@ -38,10 +38,8 @@ Transfira a pasta `build/web/` (ou apenas o seu conteúdo) para o seu servidor r
 ### 5. Iniciar o Servidor com um Único Comando
 No servidor, acesse a pasta onde está o conteúdo web e execute:
 ```bash
-dhttpd --path /var/www/impactcar-web --port 80
+dhttpd --path atividade5/atividade_extensionista_5_semestre/build/web/ --host 0.0.0.0 --port 8080
 ```
-*(Opcional: use `--port 8080` caso prefira rodar em outra porta).*
-
 ---
 
 ## 🔄 Mantendo o Servidor Rodando em Segundo Plano (`tmux`)

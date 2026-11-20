@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../core/utils/image_compressor.dart';
@@ -18,7 +19,7 @@ class NovoOrcamentoController extends ChangeNotifier {
   final veiculoPlacaController = TextEditingController();
   final descricaoDanoController = TextEditingController();
 
-  final List<File> fotosSelecionadas = [];
+  final List<Uint8List> fotosBytes = [];
   final List<String> fotosCategorias = [];
 
   bool isLoading = false;
@@ -42,18 +43,24 @@ class NovoOrcamentoController extends ChangeNotifier {
       );
 
       if (pickedFile != null) {
-        final fileOriginal = File(pickedFile.path);
-        final fileComprimido = await ImageCompressor.compressImage(fileOriginal);
+        final bytesOriginal = await pickedFile.readAsBytes();
+        Uint8List bytesProcessados = bytesOriginal;
+
+        if (!kIsWeb) {
+          final fileOriginal = File(pickedFile.path);
+          final fileComprimido = await ImageCompressor.compressImage(fileOriginal);
+          bytesProcessados = await fileComprimido.readAsBytes();
+        }
 
         final cat = index < categoriasGuiadas.length
             ? categoriasGuiadas[index]
             : 'Ângulo Extra ${index + 1}';
 
-        if (index < fotosSelecionadas.length) {
-          fotosSelecionadas[index] = fileComprimido;
+        if (index < fotosBytes.length) {
+          fotosBytes[index] = bytesProcessados;
           fotosCategorias[index] = cat;
         } else {
-          fotosSelecionadas.add(fileComprimido);
+          fotosBytes.add(bytesProcessados);
           fotosCategorias.add(cat);
         }
         notifyListeners();
@@ -65,8 +72,8 @@ class NovoOrcamentoController extends ChangeNotifier {
   }
 
   void removerFoto(int index) {
-    if (index >= 0 && index < fotosSelecionadas.length) {
-      fotosSelecionadas.removeAt(index);
+    if (index >= 0 && index < fotosBytes.length) {
+      fotosBytes.removeAt(index);
       fotosCategorias.removeAt(index);
       notifyListeners();
     }
@@ -74,18 +81,22 @@ class NovoOrcamentoController extends ChangeNotifier {
 
   Future<void> adicionarFotoDeCaminho(int index, String path) async {
     try {
-      final fileOriginal = File(path);
-      final fileComprimido = await ImageCompressor.compressImage(fileOriginal);
+      final bytesOriginal = await File(path).readAsBytes();
+      Uint8List bytesProcessados = bytesOriginal;
+      if (!kIsWeb) {
+        final fileComprimido = await ImageCompressor.compressImage(File(path));
+        bytesProcessados = await fileComprimido.readAsBytes();
+      }
 
       final cat = index < categoriasGuiadas.length
           ? categoriasGuiadas[index]
           : 'Ângulo Extra ${index + 1}';
 
-      if (index < fotosSelecionadas.length) {
-        fotosSelecionadas[index] = fileComprimido;
+      if (index < fotosBytes.length) {
+        fotosBytes[index] = bytesProcessados;
         fotosCategorias[index] = cat;
       } else {
-        fotosSelecionadas.add(fileComprimido);
+        fotosBytes.add(bytesProcessados);
         fotosCategorias.add(cat);
       }
       notifyListeners();
@@ -114,7 +125,7 @@ class NovoOrcamentoController extends ChangeNotifier {
       return false;
     }
 
-    if (fotosSelecionadas.length < 3 || fotosSelecionadas.length > 5) {
+    if (fotosBytes.length < 3 || fotosBytes.length > 5) {
       errorMessage = 'Por favor, anexe obrigatoriamente de 3 a 5 fotos do dano.';
       notifyListeners();
       return false;
@@ -126,9 +137,8 @@ class NovoOrcamentoController extends ChangeNotifier {
 
     try {
       final List<Map<String, String>> fotosPayload = [];
-      for (int i = 0; i < fotosSelecionadas.length; i++) {
-        final bytes = await fotosSelecionadas[i].readAsBytes();
-        final base64String = base64Encode(bytes);
+      for (int i = 0; i < fotosBytes.length; i++) {
+        final base64String = base64Encode(fotosBytes[i]);
         fotosPayload.add({
           'caminhoArquivo': base64String,
           'urlAcesso': base64String,

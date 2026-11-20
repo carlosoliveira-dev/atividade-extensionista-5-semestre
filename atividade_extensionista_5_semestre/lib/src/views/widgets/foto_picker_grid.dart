@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../controllers/novo_orcamento_controller.dart';
@@ -63,9 +62,9 @@ class FotoPickerGrid extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              '${controller.fotosSelecionadas.length}/5 (Mínimo 3)',
+              '${controller.fotosBytes.length}/5 (Mínimo 3)',
               style: TextStyle(
-                color: controller.fotosSelecionadas.length >= 3
+                color: controller.fotosBytes.length >= 3
                     ? Colors.green
                     : Colors.orange.shade800,
                 fontWeight: FontWeight.bold,
@@ -91,30 +90,23 @@ class FotoPickerGrid extends StatelessWidget {
             childAspectRatio: 0.85,
           ),
           itemBuilder: (context, index) {
-            final hasPhoto = index < controller.fotosSelecionadas.length;
+            final hasPhoto = index < controller.fotosBytes.length;
             final catName = index < controller.categoriasGuiadas.length
                 ? controller.categoriasGuiadas[index]
                 : 'Foto Extra ${index + 1}';
 
             if (hasPhoto) {
-              final file = controller.fotosSelecionadas[index];
+              final bytes = controller.fotosBytes[index];
               return Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: kIsWeb
-                        ? Image.network(
-                            file.path,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          )
-                        : Image.file(
-                            file,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
                   ),
                   Positioned(
                     top: 4,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -7,6 +8,11 @@ class ImageCompressor {
   /// RF02 - Compressão de Imagens no Cliente:
   /// Redimensiona e reduz a qualidade da imagem localmente antes do envio POST
   static Future<File> compressImage(File file, {int maxWidth = 1080, int quality = 70}) async {
+    if (kIsWeb) {
+      // Na Web, o path_provider não é suportado; retornamos o arquivo diretamente sem compressão nativa de disco
+      return file;
+    }
+
     try {
       final bytes = await file.readAsBytes();
       final decoded = img.decodeImage(bytes);

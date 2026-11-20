@@ -122,7 +122,7 @@ class _AgendamentosPageState extends State<AgendamentosPage> {
                           imageChild = Image.memory(decodedBytes, fit: BoxFit.cover);
                         } else if (rawData.startsWith('http')) {
                           imageChild = Image.network(rawData, fit: BoxFit.cover);
-                        } else if (File(rawData).existsSync()) {
+                        } else if (!kIsWeb && File(rawData).existsSync()) {
                           imageChild = Image.file(File(rawData), fit: BoxFit.cover);
                         } else {
                           imageChild = const Center(child: Icon(Icons.image_not_supported, color: Colors.grey));
